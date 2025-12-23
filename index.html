@@ -601,6 +601,425 @@
     transition: all 0.3s;
 }
 
+@media (max-width: 768px) {
+    #menuBtn {
+        display: block;
+        top: 70px;
+        padding: 10px 16px;  /* 더 작게 */
+        font-size: 1.2em;  /* 더 작게 */
+    }
+    
+    /* 노래 제목 - 이 부분이 기존에 있다면 교체 */
+     #songInfo {
+        position: absolute !important;  /* 추가 */
+        font-size: 1.5em !important;
+        top: 140px !important;  /* !important 추가 */
+        padding: 5px 10px;
+        max-width: 80%;
+        text-align: center;
+        left: 50% !important;  /* !important 추가 */
+        transform: translateX(-50%) !important;  /* !important 추가 */
+        letter-spacing: 0.5px;
+    }
+}
+
+@media (max-width: 768px) {
+    #toggleControlsBtn {
+        display: none !important;  /* 모바일에서 완전히 숨김 */
+    }
+}
+
+#toggleControlsBtn2 {
+    background: rgba(255, 255, 100, 0.2);
+}
+
+#toggleControlsBtn2:hover {
+    background: rgba(255, 255, 100, 0.4);
+}
+
+
+@media (max-width: 768px) {
+     #toggleControlsBtn {
+        bottom: 195px;
+        left: 50%;
+        transform: translateX(-50%) scale(0.8);  /* 버튼 크기만 줄임 */
+        z-index: 100;  /* 맨 위로 */
+    }
+    
+    #controls {
+        bottom: 140px;  /* 컨트롤은 아래로 */
+        padding-top: 20px;  /* 위쪽 여백 */
+    }
+    
+    #controls button {
+        padding: 8px 12px;
+        font-size: 0.85em;
+        min-width: 80px;
+    }
+    
+    #progress-container {
+        bottom: 95px;  /* 70px에서 95px로 올림 */
+    }
+    
+    #volumeToggleBtn {
+        bottom: 20px;
+    }
+    
+    #volumeControl {
+        bottom: 75px;
+    }
+}
+
+/* 햄버거 메뉴 */
+#menuBtn {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 100;
+    padding: 6px 10px;  /* 10px 15px에서 축소 */
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 8px;  /* 10px에서 축소 */
+    cursor: pointer;
+    font-size: 1em;  /* 1.3em에서 축소 */
+    transition: all 0.3s;
+    display: none;
+}
+
+#menuBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+#menuPanel {
+    display: none;
+    position: fixed;
+    top: 60px;
+    left: 10px;
+    z-index: 100;
+    background: rgba(20, 20, 20, 0.95);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 15px;
+    min-width: 200px;
+    backdrop-filter: blur(10px);
+}
+
+#menuPanel.show {
+    display: block;
+}
+
+#menuPanel button {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: all 0.3s;
+    text-align: left;
+}
+
+#menuPanel button:last-child {
+    margin-bottom: 0;
+}
+
+#togglePlaylistBtn2 {
+    background: rgba(0, 240, 255, 0.2);
+}
+
+#togglePlaylistBtn2:hover {
+    background: rgba(0, 240, 255, 0.4);
+}
+
+#createQueueBtn2 {
+    background: rgba(100, 200, 100, 0.2);
+}
+
+#createQueueBtn2:hover {
+    background: rgba(100, 200, 100, 0.4);
+}
+
+#speedControlBtn2 {
+    background: rgba(255, 200, 100, 0.2);
+}
+
+#speedControlBtn2:hover {
+    background: rgba(255, 200, 100, 0.4);
+}
+
+
+
+/* 모바일에서만 햄버거 메뉴 보이기 */
+@media (max-width: 768px) {
+    #menuBtn {
+        display: block;
+    }
+    
+    #togglePlaylistBtn,
+    #createQueueBtn,
+    #speedControlBtn {
+        display: none !important;
+    }
+    
+    /* NCS 웨이브 효과 크기 복원 */
+
+@media (max-width: 768px) {
+    /* 캔버스 확대 제거 */
+    /* #canvas { transform: scale(1.4); } 삭제 */
+    
+    /* 배경 이미지가 제대로 보이도록 */
+    #album-bg {
+        opacity: 0.6;
+        z-index: 0;
+    }
+    
+    /* 앨범 아트 크기 조정 */
+    #album-art {
+        width: 140px;
+        height: 140px;
+        z-index: 5;
+    }
+}
+
+@media (max-width: 768px) {
+    /* 햄버거 메뉴 위치 조정 */
+    #menuBtn {
+        display: block;
+        top: 70px;  /* 10px에서 70px로 변경 */
+    }
+    
+    /* 노래 제목 모바일 최적화 */
+    #songInfo {
+        font-size: 1.2em;  /* 2em에서 1.2em으로 축소 */
+        top: 120px;  /* 80px에서 120px로 이동 (햄버거 메뉴 아래) */
+        padding: 8px 15px;
+        max-width: 85%;
+        text-align: center;  /* 중앙 정렬 추가 */
+        left: 50%;  /* 추가 */
+        transform: translateX(-50%);  /* 추가 */
+        letter-spacing: 1px;  /* 2px에서 1px로 축소 */
+        white-space: nowrap;  /* 한 줄로 유지 */
+        overflow: hidden;  /* 넘치는 텍스트 숨김 */
+        text-overflow: ellipsis;  /* ... 표시 */
+    }
+    
+    /* 노래 제목이 숨겨졌을 때도 중앙 유지 */
+    #songInfo.hidden {
+        transform: translateX(-50%) translateY(-20px);
+    }
+    
+    /* 기존 캔버스 scale 제거 */
+    #canvas {
+        /* transform: scale(1.4); 제거 */
+    }
+}
+
+@media (max-width: 768px) {
+    #menuBtn {
+        display: block;
+        top: 70px;  /* 추가 */
+    }
+    
+    #togglePlaylistBtn,
+    #createQueueBtn,
+    #speedControlBtn {
+        display: none !important;
+    }
+    
+    /* 캔버스 확대 제거 */
+    /* #canvas {
+        transform: scale(1.4);
+        transform-origin: center;
+    } */
+    
+    /* 플레이리스트 수정 */
+    #playlist {
+        max-height: 50px;  /* 40px에서 50px로 */
+        padding: 8px 10px;  /* 5px 10px에서 변경 */
+    }
+    
+
+    .playlist-item {
+        padding: 6px 12px;  /* 5px 10px에서 변경 */
+        font-size: 0.65em;  /* 0.75em에서 더 작게 */
+    }
+    
+    /* 노래 제목 */
+    #songInfo {
+        font-size: 0.85em;  /* 1em에서 축소 */
+        top: 120px;  /* 65px에서 이동 */
+        padding: 6px 12px;
+        max-width: 80%;
+        text-align: center;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+}
+    
+    /* 현재 재생목록 최소화 */
+    #currentQueue {
+        right: 10px;
+        top: 10px;
+        max-width: 45px;
+        max-height: 45px;
+        padding: 8px;
+        overflow: hidden;
+        border-radius: 50%;
+        transition: all 0.3s;
+    }
+    
+    #currentQueue h3 {
+        font-size: 1.3em;
+        margin: 0;
+        white-space: nowrap;
+    }
+    
+    #currentQueue h3::before {
+        content: "🎶";
+    }
+    
+    #currentQueue h3 span,
+    #currentQueue h3 button {
+        display: none;
+    }
+    
+    #currentQueueList,
+    #cancelQueueBtn {
+        display: none;
+    }
+    
+    /* 터치/클릭 시 확장 */
+    #currentQueue.expanded {
+        max-width: 220px;
+        max-height: 60vh;
+        border-radius: 15px;
+        padding: 15px;
+    }
+    
+    #currentQueue.expanded h3 span,
+    #currentQueue.expanded h3 button {
+        display: inline;
+    }
+    
+    #currentQueue.expanded #currentQueueList,
+    #currentQueue.expanded #cancelQueueBtn {
+        display: block;
+    }
+    
+    #currentQueue.expanded h3::before {
+        display: none;
+    }
+    
+    /* 플레이리스트 */
+    #playlist {
+        max-height: 40px;
+        padding: 5px 10px;
+    }
+    
+    .playlist-item {
+        padding: 5px 10px;
+        font-size: 0.75em;
+    }
+    
+    /* 노래 제목 */
+    #songInfo {
+        font-size: 1em;
+        top: 65px;
+        padding: 6px 12px;
+        max-width: 80%;
+    }
+    
+    /* 앨범 아트 */
+    #album-art {
+        width: 140px;
+        height: 140px;
+    }
+    
+       /* 컨트롤 버튼 */
+    #controls {
+        flex-wrap: wrap;
+        gap: 8px;
+        bottom: 120px;
+        max-width: 95%;
+        justify-content: center;
+    }
+    
+    #controls button {
+        padding: 10px 15px;
+        font-size: 0.9em;
+        flex: 1 1 calc(50% - 8px);
+        min-width: 100px;
+        max-width: 160px;
+    }
+    
+    /* 토글 버튼 */
+    #toggleControlsBtn {
+        bottom: 195px;
+        font-size: 1.2em;
+    }
+    
+    /* 프로그레스 바 */
+    #progress-container {
+        bottom: 70px;
+        width: 90%;
+    }
+    
+    #time-display {
+        font-size: 0.8em;
+    }
+    
+    /* 볼륨 컨트롤 */
+    #volumeToggleBtn {
+        bottom: 12px;
+        right: 12px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.1em;
+        padding: 8px;
+    }
+    
+    #volumeControl {
+        bottom: 60px;
+        right: 12px;
+        padding: 8px 12px;
+    }
+    
+    #volumeSlider {
+        width: 70px;
+    }
+    
+    /* 모달 */
+    #queueModalContent,
+    #speedModalContent {
+        width: 95%;
+        padding: 15px;
+        max-height: 85vh;
+    }
+    
+    #queueModalContent h2,
+    #speedModalContent h2 {
+        font-size: 1.2em;
+    }
+    
+    .queue-section {
+        flex-direction: column;
+    }
+    
+    .speed-options {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .speed-option {
+        padding: 15px;
+    }
+}
+
 #volumeControl.show {
     display: flex;
 }
@@ -782,7 +1201,7 @@
     bottom: 170px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 10;
+    z-index: 50;
     padding: 8px 20px;
     background: transparent;  /* 투명 배경 */
     border: none;  /* 테두리 제거 */
@@ -866,12 +1285,41 @@
     pointer-events: none;
 }
 
+/* 기본은 보임 */
+#togglePlaylistBtn,
+#createQueueBtn,
+#speedControlBtn {
+    display: block;  /* 또는 inline-block */
+}
+
+/* 모바일에서만 숨김 */
+@media (max-width: 768px) {
+    #togglePlaylistBtn,
+    #createQueueBtn,
+    #speedControlBtn {
+        display: none !important;
+    }
+    
+    #menuBtn {
+        display: block;
+    }
+}
+
+
     </style>
 </head>
 <body>
-    <button id="togglePlaylistBtn">▼ 노래 목록</button>
-    <button id="createQueueBtn">재생목록 만들기</button>
-    <button id="speedControlBtn">+ 속도 조절</button>
+    <button id="menuBtn">☰</button>
+<div id="menuPanel">
+    <button id="togglePlaylistBtn2">▼ 노래 목록</button>
+    <button id="createQueueBtn2">재생목록 만들기</button>
+    <button id="speedControlBtn2">+ 속도 조절</button>
+        <button id="toggleControlsBtn2">▼ 컨트롤 숨기기/보이기</button>
+    </div>
+
+<button id="togglePlaylistBtn">▼ 노래 목록</button>
+<button id="createQueueBtn">재생목록 만들기</button>
+<button id="speedControlBtn">+ 속도 조절</button>
     
     <div id="playlist">
         <!-- 
@@ -896,8 +1344,14 @@
          <div class="playlist-item" data-src="VAI VAI TRAIR.mp3" data-icon="VAI VAI TRAIR.jpeg">VAI VAI TRAIR</div>
          <div class="playlist-item" data-src="LUA NA PRAA.mp3" data-icon="LUA NA PRAA.jpeg">LUA NA PRAA</div>
 
-        <div class="playlist-item" data-src="NO BATIDÃO .mp3" data-icon="NO BATIDÃO .png">NO BATIDÃO</div>
-    </div>
+        
+         <div class="playlist-item" data-src="NO BATIDÃO .mp3" data-icon="NO BATIDÃO .png">NO BATIDÃO</div>
+<!-- 노래 목록들 -->
+
+    <!-- 기존 노래 목록들... -->
+    <button id="playlistScrollRight" style="position: sticky; right: 0; background: rgba(20,20,20,0.95); border: none; color: white; padding: 10px; cursor: pointer; font-size: 1.2em;">›</button>
+        </div>
+
 
     <div id="container">
        <img id="album-bg" src="" alt="Background">
@@ -1056,6 +1510,13 @@ let currentSpeed = 1.0;
 let isQueueLooping = false;
 const queueLoopCheckbox = document.getElementById('queueLoopCheckbox');
 const queueLoopOption = document.getElementById('queueLoopOption');
+// 햄버거 메뉴 기능
+const menuBtn = document.getElementById('menuBtn');
+const menuPanel = document.getElementById('menuPanel');
+const togglePlaylistBtn2 = document.getElementById('togglePlaylistBtn2');
+const createQueueBtn2 = document.getElementById('createQueueBtn2');
+const speedControlBtn2 = document.getElementById('speedControlBtn2');
+
 
 // 컨트롤 숨기기/보이기
 let controlsVisible = true;
@@ -1089,6 +1550,14 @@ const MAX_QUEUE = 8;
         // 재생목록 토글
     // 재생목록 토글
 // 재생목록 토글
+
+const toggleControlsBtn2 = document.getElementById('toggleControlsBtn2');
+
+toggleControlsBtn2.addEventListener('click', () => {
+    toggleControlsBtn.click();  // 기존 버튼 기능 실행
+    menuPanel.classList.remove('show');
+});
+
 let playlistVisible = true;
 togglePlaylistBtn.addEventListener('click', () => {
     playlistVisible = !playlistVisible;
@@ -1109,6 +1578,45 @@ togglePlaylistBtn.addEventListener('click', () => {
     }
 });
 
+if (menuBtn && menuPanel) {
+    menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menuPanel.classList.toggle('show');
+    });
+
+    // 메뉴 외부 클릭시 닫기
+    document.addEventListener('click', (e) => {
+        if (!menuPanel.contains(e.target) && e.target !== menuBtn) {
+            menuPanel.classList.remove('show');
+        }
+    });
+
+    // 기존 버튼 기능 연결
+    togglePlaylistBtn2.addEventListener('click', () => {
+        togglePlaylistBtn.click();
+        menuPanel.classList.remove('show');
+    });
+
+    createQueueBtn2.addEventListener('click', () => {
+        createQueueBtn.click();
+        menuPanel.classList.remove('show');
+    });
+
+    speedControlBtn2.addEventListener('click', () => {
+        speedControlBtn.click();
+        menuPanel.classList.remove('show');
+    });
+}
+
+// 재생목록 터치로 확장/축소 (모바일)
+if (window.innerWidth <= 768 && currentQueueDiv) {
+    currentQueueDiv.addEventListener('click', (e) => {
+        if (!e.target.closest('button') && !e.target.closest('.remove-queue-btn')) {
+            currentQueueDiv.classList.toggle('expanded');
+        }
+    });
+}
+
 toggleQueueDisplayBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     queueContentVisible = !queueContentVisible;
@@ -1122,6 +1630,15 @@ toggleQueueDisplayBtn.addEventListener('click', (e) => {
         cancelQueueBtn.style.display = 'none';
         toggleQueueDisplayBtn.textContent = '▲';
     }
+});
+
+const playlistScrollRight = document.getElementById('playlistScrollRight');
+
+playlistScrollRight.addEventListener('click', () => {
+    playlistDiv.scrollBy({
+        left: 200,  // 200px 오른쪽으로
+        behavior: 'smooth'
+    });
 });
 
 // 노래 제목 토글
