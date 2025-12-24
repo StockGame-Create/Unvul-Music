@@ -1254,6 +1254,163 @@
     transition: all 0.3s;
 }
 
+/* 앨범 카드 스타일 */
+.album-card {
+    background: rgba(30, 30, 30, 0.8);
+    border: 2px solid rgba(100, 200, 255, 0.3);
+    border-radius: 15px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.album-card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(100, 200, 255, 0.8);
+    box-shadow: 0 10px 30px rgba(100, 200, 255, 0.4);
+    background: rgba(40, 40, 40, 0.9);
+}
+
+.album-card-icon {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(100, 200, 255, 0.5);
+    margin-bottom: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s;
+}
+
+/* 기존의 position: fixed 스타일 완전히 삭제하고 아래로 교체 */
+#viewAllSongsBtn {
+    padding: 8px 15px;
+    background: rgba(100, 200, 255, 0.3);
+    border: 2px solid rgba(100, 200, 255, 0.5);
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.3s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    /* position 속성 없음 - 플레이리스트 흐름에 따라 배치됨 */
+}
+
+#viewAllSongsBtn:hover {
+    background: rgba(100, 200, 255, 0.5);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(100, 200, 255, 0.4);
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+    #viewAllSongsBtn {
+        padding: 6px 12px;
+        font-size: 0.75em;
+    }
+}
+
+.album-card:hover .album-card-icon {
+    transform: rotate(360deg);
+    box-shadow: 0 5px 25px rgba(100, 200, 255, 0.7);
+}
+
+.album-card-title {
+    color: white;
+    font-size: 0.95em;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.album-card-play {
+    background: rgba(100, 200, 255, 0.3);
+    border: 1px solid rgba(100, 200, 255, 0.5);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    margin-top: 10px;
+    transition: all 0.3s;
+}
+
+.album-card:hover .album-card-play {
+    background: rgba(100, 200, 255, 0.6);
+    transform: scale(1.05);
+}
+
+#skullEffectBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 80px;
+    z-index: 100;
+    padding: 15px;
+    background: rgba(30, 30, 30, 0.9);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.5em;
+    transition: all 0.3s;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#skullEffectBtn:hover {
+    background: rgba(50, 50, 50, 0.9);
+    transform: scale(1.1);
+}
+
+#skullCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+    #allSongsGrid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+        gap: 15px !important;
+    }
+    
+    .album-card {
+        padding: 10px;
+    }
+    
+    .album-card-title {
+        font-size: 0.8em;
+    }
+}
+
+#viewAllSongsBtn {
+    transition: all 0.3s;
+    flex-shrink: 0;  /* 버튼이 줄어들지 않도록 */
+}
+
+#viewAllSongsBtn:hover {
+    background: rgba(100, 200, 255, 0.5);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(100, 200, 255, 0.4);
+}
+
+/* 모바일에서 버튼 크기 조정 */
+@media (max-width: 768px) {
+    #viewAllSongsBtn {
+        padding: 6px 12px;
+        font-size: 0.75em;
+    }
+}
+
 .queue-loop-option:hover {
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(100, 200, 255, 0.3);
@@ -1344,22 +1501,37 @@
            <div class="playlist-item" data-src="VEM VEM.mp3" data-icon="VEM VEM.jpeg">VEM VEM</div>
            <div class="playlist-item" data-src="MENTE MÁ.mp3" data-icon="MENTE MÁ.jpeg">MENTE MÁ</div>
            <div class="playlist-item" data-src="DIA DELÍCIA.mp3" data-icon="DIA DELÍCIA.jpeg">DIA DELÍCIA</div>
+           <div class="playlist-item" data-src="ACELERADA.mp3" data-icon="ACELERADA.jpeg">ACELERADA</div>
+           <div class="playlist-item" data-src="VEM NO PIQUE.mp3" data-icon="VEM NO PIQUE.jpeg">VEM NO PIQUE</div>
 
          <div class="playlist-item" data-src="VAI VAI TRAIR.mp3" data-icon="VAI VAI TRAIR.jpeg">VAI VAI TRAIR</div>
          <div class="playlist-item" data-src="LUA NA PRAA.mp3" data-icon="LUA NA PRAA.jpeg">LUA NA PRAA</div>
+           <div class="playlist-item" data-src="YOSHO HAI MONTAGEM.mp3" data-icon="YOSHO HAI MONTAGEM.jpeg">YOSHO HAI MONTAGEM</div>
 
         
          <div class="playlist-item" data-src="NO BATIDÃO .mp3" data-icon="NO BATIDÃO .png">NO BATIDÃO</div>
 <!-- 노래 목록들 -->
-
+    <button id="viewAllSongsBtn">전체 보기</button>
     <!-- 기존 노래 목록들... -->
     <button id="playlistScrollRight" style="position: sticky; right: 0; background: rgba(20,20,20,0.95); border: none; color: white; padding: 10px; cursor: pointer; font-size: 1.2em;">›</button>
         </div>
 
 
+
+        <div id="allSongsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 300; overflow-y: auto;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h2 style="color: white; font-size: 2em; text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);">📀_LIST_📀</h2>
+            <button id="closeAllSongsBtn" style="background: rgba(255, 100, 100, 0.3); border: 2px solid rgba(255, 100, 100, 0.5); color: white; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-size: 1.1em;">✕ 닫기</button>
+        </div>
+        <div id="allSongsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px;"></div>
+    </div>
+</div>
+
     <div id="container">
        <img id="album-bg" src="" alt="Background">
         <canvas id="canvas"></canvas>
+        <canvas id="skullCanvas"></canvas>
         <img id="album-art" src="" alt="Album Art">
         <div id="songInfo">노래를 선택하세요</div>
         <button id="toggleControlsBtn">▼</button>
@@ -1373,6 +1545,8 @@
               <button id="loopBtn">↺ 반복</button> 
         </div>
  <button id="volumeToggleBtn">🔊</button>
+<!-----<button id="skullEffectBtn">?</button>
+    -->
 <div id="volumeControl">
     <span id="volumeIcon">🔊</span>
     <input type="range" id="volumeSlider" min="0" max="100" value="100">
@@ -1521,6 +1695,70 @@ const togglePlaylistBtn2 = document.getElementById('togglePlaylistBtn2');
 const createQueueBtn2 = document.getElementById('createQueueBtn2');
 const speedControlBtn2 = document.getElementById('speedControlBtn2');
 
+// 전체 보기 모달 기능
+const viewAllSongsBtn = document.getElementById('viewAllSongsBtn');
+const allSongsModal = document.getElementById('allSongsModal');
+const closeAllSongsBtn = document.getElementById('closeAllSongsBtn');
+const allSongsGrid = document.getElementById('allSongsGrid');
+
+viewAllSongsBtn.addEventListener('click', () => {
+    allSongsModal.style.display = 'block';
+    loadAllSongsGrid();
+});
+
+closeAllSongsBtn.addEventListener('click', () => {
+    allSongsModal.style.display = 'none';
+});
+
+allSongsModal.addEventListener('click', (e) => {
+    if (e.target === allSongsModal) {
+        allSongsModal.style.display = 'none';
+    }
+});
+
+function loadAllSongsGrid() {
+    allSongsGrid.innerHTML = '';
+    const allSongs = document.querySelectorAll('.playlist-item');
+    
+    // 노래 데이터 수집 및 정렬
+    const songsArray = [];
+    allSongs.forEach((item) => {
+        songsArray.push({
+            element: item,
+            src: item.getAttribute('data-src'),
+            icon: item.getAttribute('data-icon'),
+            title: item.textContent
+        });
+    });
+    
+    // 알파벳순 정렬
+    songsArray.sort((a, b) => a.title.localeCompare(b.title));
+    
+    // 카드 생성
+    songsArray.forEach((song) => {
+        const card = document.createElement('div');
+        card.className = 'album-card';
+        
+        const iconSrc = song.icon || 'default-album.png'; // 기본 이미지 설정
+        
+        card.innerHTML = `
+            <img src="${iconSrc}" class="album-card-icon" alt="${song.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%2333333%22/%3E%3Ctext x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2220%22%3E🎵%3C/text%3E%3C/svg%3E'">
+            <div class="album-card-title">${song.title}</div>
+            <button class="album-card-play">▶ 재생</button>
+        `;
+        
+        card.addEventListener('click', () => {
+            loadSong(song.element);
+            allSongsModal.style.display = 'none';
+        });
+        
+        allSongsGrid.appendChild(card);
+    });
+}
+
+
+
+
 
 // 컨트롤 숨기기/보이기
 let controlsVisible = true;
@@ -1636,11 +1874,19 @@ toggleQueueDisplayBtn.addEventListener('click', (e) => {
     }
 });
 
+//const playlistScrollLeft = document.getElementById('playlistScrollLeft');
 const playlistScrollRight = document.getElementById('playlistScrollRight');
+
+//playlistScrollLeft.addEventListener('click', () => {
+  //  playlistDiv.scrollBy({
+    //    left: -200,
+      //  behavior: 'smooth'
+   /// });
+/// });
 
 playlistScrollRight.addEventListener('click', () => {
     playlistDiv.scrollBy({
-        left: 200,  // 200px 오른쪽으로
+        left: 200,
         behavior: 'smooth'
     });
 });
