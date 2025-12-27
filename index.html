@@ -1371,6 +1371,103 @@
     transition: transform 0.3s, opacity 0.3s;
 }
 
+#queueModalContent {
+    background: rgba(30, 30, 30, 0.95);
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 1000px; /* 넓이 증가 */
+    max-height: 85vh; /* 높이 제한 */
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+#queueModalContent h2 {
+    margin-bottom: 20px;
+    color: white;
+    text-align: center;
+    flex-shrink: 0; /* 제목은 고정 */
+}
+
+.queue-section {
+    display: flex;
+    gap: 20px;
+    flex: 1; /* 남은 공간 모두 사용 */
+    min-height: 0; /* 중요: flex 자식이 overflow 되도록 */
+}
+
+.available-songs, .selected-queue {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* 중요 */
+}
+
+.available-songs h3, .selected-queue h3 {
+    color: white;
+    margin-bottom: 10px;
+    font-size: 1em;
+    flex-shrink: 0;
+}
+
+/* 스크롤 영역 추가 */
+#availableSongsList, #selectedQueueList {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 5px;
+}
+
+/* 스크롤바 스타일 */
+#availableSongsList::-webkit-scrollbar,
+#selectedQueueList::-webkit-scrollbar {
+    width: 8px;
+}
+
+#availableSongsList::-webkit-scrollbar-track,
+#selectedQueueList::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+#availableSongsList::-webkit-scrollbar-thumb,
+#selectedQueueList::-webkit-scrollbar-thumb {
+    background: rgba(100, 200, 255, 0.5);
+    border-radius: 4px;
+}
+
+#availableSongsList::-webkit-scrollbar-thumb:hover,
+#selectedQueueList::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 200, 255, 0.7);
+}
+
+.queue-loop-option {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 15px; /* 위쪽 여백 */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    flex-shrink: 0; /* 고정 크기 */
+}
+
+.queue-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+    flex-shrink: 0; /* 고정 크기 */
+}
+
 .queue-loop-option {
     background: rgba(255, 255, 255, 0.05);
     padding: 15px;
@@ -1992,12 +2089,7 @@ body.speed-super-spedup::before {
         </div>
     </div>
 </div>
-        <div class="queue-buttons">
-            <button id="startQueueBtn">▶ 재생 시작</button>
-            <button id="closeQueueBtn">X 닫기</button>
-        </div>
-    </div>
-</div>
+
 
 <!-- 기존 speedModal을 찾아서 통째로 교체 -->
 <div id="speedModal">
@@ -2060,7 +2152,7 @@ body.speed-super-spedup::before {
 
 
 
-
+</div>
 
 
 <div id="currentQueue">
@@ -2272,7 +2364,32 @@ function showRandomAnimation(songsArray) {
             setTimeout(() => {
                 songInfo.style.fontSize = '2em';
                 songInfo.style.transition = 'all 0.3s';
-                loadSong(finalSong.element);
+                
+                // element가 있으면 사용, 없으면 직접 로드
+                if (finalSong.element) {
+                    loadSong(finalSong.element);
+                } else {
+                    // 직접 노래 로드
+                    currentSong = finalSong;
+                    audio.src = finalSong.src;
+                    audio.playbackRate = currentSpeed;
+                    audio.preservesPitch = (currentSpeed === 1.0);
+                    songInfo.textContent = finalSong.title;
+                    
+                    if (finalSong.icon) {
+                        albumArt.src = finalSong.icon;
+                        albumArt.classList.add('show');
+                        albumBg.src = finalSong.icon;
+                        albumBg.classList.add('show');
+                    }
+                    
+                    setupAudio();
+                    audio.play();
+                    isPlaying = true;
+                    visualize();
+                    playBtn.style.display = 'none';
+                    pauseBtn.style.display = 'inline-block';
+                }
             }, 1000);
         }
     }, 100);
@@ -2798,26 +2915,25 @@ queueLoopOption.addEventListener('click', (e) => {
 queueLoopCheckbox.addEventListener('change', (e) => {
     isQueueLooping = e.target.checked;
 });
-
 function loadAvailableSongs() {
     availableSongsList.innerHTML = '';
     const allSongs = document.querySelectorAll('.playlist-item');
+    
     // 노래 데이터를 배열로 수집
-const songsArray = [];
-allSongs.forEach((item) => {
-    songsArray.push({
-        src: item.getAttribute('data-src'),
-        icon: item.getAttribute('data-icon'),
-        title: item.textContent
+    const songsArray = [];
+    allSongs.forEach((item) => {
+        songsArray.push({
+            src: item.getAttribute('data-src'),
+            icon: item.getAttribute('data-icon'),
+            title: item.textContent
+        });
     });
-});
 
-// 제목 기준 알파벳순 정렬
-songsArray.sort((a, b) => a.title.localeCompare(b.title));
+    // 제목 기준 알파벳순 정렬
+    songsArray.sort((a, b) => a.title.localeCompare(b.title));
 
-// 정렬된 순서로 표시
-songsArray.forEach((songData) => {
-        
+    // 정렬된 순서로 표시
+    songsArray.forEach((songData) => {
         const option = document.createElement('div');
         option.className = 'song-option';
         option.innerHTML = `
@@ -2835,6 +2951,32 @@ songsArray.forEach((songData) => {
         
         availableSongsList.appendChild(option);
     });
+
+    // _RANDOM_ 항목을 맨 마지막에 추가
+    const randomOption = document.createElement('div');
+    randomOption.className = 'song-option';
+    randomOption.style.background = 'linear-gradient(135deg, rgba(255, 100, 200, 0.2), rgba(100, 200, 255, 0.2))';
+    randomOption.style.border = '2px solid rgba(255, 100, 200, 0.5)';
+    randomOption.innerHTML = `
+        <span style="font-weight: bold;">⇄ _RANDOM_</span>
+        <span>➕</span>
+    `;
+    
+    randomOption.addEventListener('click', () => {
+        if (playQueue.length < MAX_QUEUE) {
+            playQueue.push({
+                src: '_RANDOM_',
+                icon: null,
+                title: '⇄ _RANDOM_',
+                isRandom: true,
+                songsArray: songsArray
+            });
+            updateSelectedQueue();
+            updateAvailableSongs();
+        }
+    });
+    
+    availableSongsList.appendChild(randomOption);
     
     updateAvailableSongs();
 }
@@ -2893,21 +3035,17 @@ startQueueBtn.addEventListener('click', () => {
     playQueueSong(0);
     updateCurrentQueueDisplay();
 });
-
 function playQueueSong(index) {
     // 재생목록 끝났을 때
     if (index >= playQueue.length) {
         if (isQueueLooping) {
-            // 반복 모드면 처음부터 다시
             currentQueueIndex = 0;
             playQueueSong(0);
             return;
         } else {
-            // 반복 안 하면 종료
             isQueueMode = false;
             currentQueueDiv.classList.remove('show');
             
-            // 종료 메시지 개선
             if (confirm('재생목록이 모두 완료되었습니다! 🎉\n\n같은 재생목록을 다시 시작하시겠습니까?')) {
                 isQueueMode = true;
                 currentQueueIndex = 0;
@@ -2921,14 +3059,87 @@ function playQueueSong(index) {
     const song = playQueue[index];
     currentQueueIndex = index;
     
+    // _RANDOM_인 경우 애니메이션과 함께 랜덤 선택
+    if (song.isRandom && song.songsArray) {
+        // 랜덤 애니메이션 시작
+        songInfo.style.fontSize = '3em';
+        songInfo.style.transition = 'none';
+        
+        let counter = 0;
+        const maxCount = 20;
+        const interval = setInterval(() => {
+            const randomIndex = Math.floor(Math.random() * song.songsArray.length);
+            songInfo.textContent = '⇄ ' + song.songsArray[randomIndex].title;
+            songInfo.style.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+            counter++;
+            
+            if (counter >= maxCount) {
+                clearInterval(interval);
+                // 최종 선택
+                const finalIndex = Math.floor(Math.random() * song.songsArray.length);
+                const randomSong = song.songsArray[finalIndex];
+                
+                songInfo.style.color = '#00ff00';
+                const loopIndicator = isQueueLooping ? '↺' : '';
+                songInfo.textContent = `✓ ${loopIndicator}${index + 1}/${playQueue.length} - ${randomSong.title}`;
+                
+                setTimeout(() => {
+                    songInfo.style.fontSize = '2em';
+                    songInfo.style.transition = 'all 0.3s';
+                    
+                    // 선택된 노래로 재생
+                    currentSong = randomSong;
+                    audio.src = randomSong.src;
+                    audio.playbackRate = currentSpeed;
+                    audio.preservesPitch = (currentSpeed === 1.0);
+                    
+                    const loopIndicator = isQueueLooping ? '↺' : '';
+                    songInfo.textContent = `${loopIndicator}${index + 1}/${playQueue.length} - ${randomSong.title}`;
+                    
+                    // 앨범 아트 로드
+                    if (randomSong.icon) {
+                        const img = new Image();
+                        img.onload = () => {
+                            albumArt.src = randomSong.icon;
+                            albumArt.classList.add('show');
+                            albumBg.src = randomSong.icon;
+                            albumBg.classList.add('show');
+                        };
+                        img.onerror = () => {
+                            albumArt.classList.remove('show');
+                            albumBg.classList.remove('show');
+                        };
+                        img.src = randomSong.icon;
+                    } else {
+                        albumArt.classList.remove('show');
+                        albumBg.classList.remove('show');
+                    }
+
+                    if (animationId) {
+                        cancelAnimationFrame(animationId);
+                    }
+                    
+                    setupAudio();
+                    audio.play();
+                    isPlaying = true;
+                    visualize();
+                    playBtn.style.display = 'none';
+                    pauseBtn.style.display = 'inline-block';
+                    
+                    updateCurrentQueueDisplay();
+                }, 1000);
+            }
+        }, 100);
+        
+        return;
+    }
+    
+    // 일반 노래 재생
     currentSong = song;
     audio.src = song.src;
-    
-    // 속도 적용
     audio.playbackRate = currentSpeed;
     audio.preservesPitch = (currentSpeed === 1.0);
     
-    // 반복 표시 추가
     const loopIndicator = isQueueLooping ? '↺' : '';
     const baseTitle = `${loopIndicator}${index + 1}/${playQueue.length} - ${song.title}`;
     
@@ -2993,7 +3204,14 @@ function updateCurrentQueueDisplay() {
         if (index === currentQueueIndex) {
             item.classList.add('playing');
         }
-        item.textContent = `${index + 1}. ${song.title}`;
+        
+        // _RANDOM_인 경우 표시
+        if (song.isRandom) {
+            item.textContent = `${index + 1}. ⇄ _RANDOM_`;
+        } else {
+            item.textContent = `${index + 1}. ${song.title}`;
+        }
+        
         currentQueueList.appendChild(item);
     });
 }
