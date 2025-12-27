@@ -1592,6 +1592,276 @@
     }
 }
 
+/* 기존 #speedModalContent 수정 */
+#speedModalContent {
+    background: rgba(30, 30, 30, 0.95);
+    padding: 30px;
+    border-radius: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    min-width: 350px;
+}
+
+/* 탭 버튼 스타일 */
+.modal-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.modal-tab {
+    flex: 1;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: all 0.3s;
+    font-weight: bold;
+}
+
+.modal-tab:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-tab.active {
+    background: rgba(100, 200, 255, 0.3);
+    border-color: rgba(100, 200, 255, 0.8);
+    color: white;
+    box-shadow: 0 0 15px rgba(100, 200, 255, 0.4);
+}
+
+/* 탭 컨텐츠 */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 이펙트 옵션 스타일 (속도 옵션과 동일하게) */
+.effect-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.effect-option {
+    padding: 20px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.effect-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.effect-option.active {
+    background: rgba(200, 100, 255, 0.3);
+    border-color: rgba(200, 100, 255, 0.8);
+    box-shadow: 0 0 20px rgba(200, 100, 255, 0.5);
+}
+
+.effect-icon {
+    font-size: 2em;
+    flex-shrink: 0;
+}
+
+/* Slowed 버튼 - 핑크색 */
+#slowedBtn.active {
+    background: rgba(255, 150, 200, 0.3);
+    border-color: rgba(255, 150, 200, 0.8);
+    box-shadow: 0 0 20px rgba(255, 150, 200, 0.5);
+}
+
+#slowedBtn.active:hover {
+    background: rgba(255, 150, 200, 0.4);
+}
+
+/* Super Slowed - 빨간색 */
+#slowedBtn.active.super {
+    background: rgba(255, 50, 50, 0.4);
+    border-color: rgba(255, 50, 50, 0.9);
+    box-shadow: 0 0 25px rgba(255, 50, 50, 0.7);
+    animation: superPulse 1.5s ease-in-out infinite;
+}
+
+/* Sped Up 버튼 - 하늘색 */
+#spedUpBtn.active {
+    background: rgba(100, 200, 255, 0.3);
+    border-color: rgba(100, 200, 255, 0.8);
+    box-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
+}
+
+#spedUpBtn.active:hover {
+    background: rgba(100, 200, 255, 0.4);
+}
+
+/* Super Sped Up - 파란색 */
+#spedUpBtn.active.super {
+    background: rgba(50, 100, 255, 0.4);
+    border-color: rgba(50, 100, 255, 0.9);
+    box-shadow: 0 0 25px rgba(50, 100, 255, 0.7);
+    animation: superPulse 1.5s ease-in-out infinite;
+}
+
+/* Super 펄스 애니메이션 */
+@keyframes superPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+/* 배경 색상 오버레이 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    transition: background 0.5s ease;
+}
+
+/* Slowed - 핑크 오버레이 */
+body.speed-slowed::before {
+    background: radial-gradient(circle at center, rgba(255, 150, 200, 0.15) 0%, transparent 70%);
+}
+
+/* Super Slowed - 빨간 오버레이 */
+body.speed-super-slowed::before {
+    background: radial-gradient(circle at center, rgba(255, 50, 50, 0.25) 0%, transparent 70%);
+    animation: redPulse 2s ease-in-out infinite;
+}
+
+/* Sped Up - 하늘 오버레이 */
+body.speed-spedup::before {
+    background: radial-gradient(circle at center, rgba(100, 200, 255, 0.15) 0%, transparent 70%);
+}
+
+/* Super Sped Up - 파란 오버레이 */
+body.speed-super-spedup::before {
+    background: radial-gradient(circle at center, rgba(50, 100, 255, 0.25) 0%, transparent 70%);
+    animation: bluePulse 2s ease-in-out infinite;
+}
+
+/* 펄스 애니메이션 */
+@keyframes redPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes bluePulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Normal 버튼은 기존 색상 유지 */
+#normalSpeedBtn.active {
+    background: rgba(15, 255, 175, 0.3);
+    border-color: rgba(0, 255, 213, 0.8);
+    box-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
+}
+
+.effect-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+}
+
+.effect-name {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: white;
+}
+
+.effect-value {
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Super 모드 표시 */
+.speed-option.super .speed-name::before,
+.effect-option.super .effect-name::before {
+    content: "(SUPER) ";
+    color: #ffcc00;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+    #speedModalContent {
+        padding: 20px 15px;
+        width: 90%;
+        max-width: 400px;
+        min-width: auto;
+    }
+    
+    #speedModalContent h2 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+    
+    .modal-tabs {
+        gap: 8px;
+    }
+    
+    .modal-tab {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+    
+    .speed-option,
+    .effect-option {
+        padding: 15px 12px;
+    }
+    
+    .speed-icon,
+    .effect-icon {
+        font-size: 1.8em;
+    }
+}
+
 
     </style>
 </head>
@@ -1600,13 +1870,13 @@
 <div id="menuPanel">
     <button id="togglePlaylistBtn2">▼ 노래 목록</button>
     <button id="createQueueBtn2">재생목록 만들기</button>
-    <button id="speedControlBtn2">+ 속도 조절</button>
+<button id="speedControlBtn2">⚙ 노래 조정</button>
         <button id="toggleControlsBtn2">▼ 컨트롤 숨기기/보이기</button>
     </div>
 
 <button id="togglePlaylistBtn">▼ 노래 목록</button>
 <button id="createQueueBtn">재생목록 만들기</button>
-<button id="speedControlBtn">+ 속도 조절</button>
+<button id="speedControlBtn">⚙ 노래 조정</button>
     
     <div id="playlist">
         <!-- 
@@ -1729,26 +1999,60 @@
     </div>
 </div>
 
+<!-- 기존 speedModal을 찾아서 통째로 교체 -->
 <div id="speedModal">
     <div id="speedModalContent">
-        <h2>재생 속도 조절</h2>
-        <div class="speed-options">
-            <button id="slowedBtn" class="speed-option">
-                <span class="speed-icon">⬇</span>
-                <span class="speed-name">Slowed</span>
-                <span class="speed-value">0.9x</span>
-            </button>
-            <button id="normalSpeedBtn" class="speed-option active">
-                <span class="speed-icon">●</span>
-                <span class="speed-name">Normal</span>
-                <span class="speed-value">1.0x</span>
-            </button>
-            <button id="spedUpBtn" class="speed-option">
-                <span class="speed-icon">⬆</span>
-                <span class="speed-name">Sped Up</span>
-                <span class="speed-value">1.1x</span>
-            </button>
+        <h2>⚙ 노래 조정</h2>
+        
+        <!-- 탭 버튼 -->
+        <div class="modal-tabs">
+            <button id="speedTab" class="modal-tab active">+ 속도</button>
+            <button id="effectTab" class="modal-tab">★ 이펙트</button>
         </div>
+        
+        <!-- 속도 조절 탭 -->
+        <div id="speedTabContent" class="tab-content active">
+            <div class="speed-options">
+                <button id="slowedBtn" class="speed-option">
+                    <span class="speed-icon">⬇</span>
+                    <div class="speed-info">
+                        <span class="speed-name">Slowed</span>
+                        <span class="speed-value">0.9x</span>
+                    </div>
+                </button>
+                
+                <button id="normalSpeedBtn" class="speed-option active">
+                    <span class="speed-icon">●</span>
+                    <div class="speed-info">
+                        <span class="speed-name">Normal</span>
+                        <span class="speed-value">1.0x</span>
+                    </div>
+                </button>
+                
+                <button id="spedUpBtn" class="speed-option">
+                    <span class="speed-icon">⬆</span>
+                    <div class="speed-info">
+                        <span class="speed-name">Sped Up</span>
+                        <span class="speed-value">1.1x</span>
+                    </div>
+                </button>
+            </div>
+            <p style="color: rgba(255,255,255,0.6); font-size: 0.85em; margin-top: 15px;">
+               
+            </p>
+             <button id="closeSpeedBtn" class="modal-close-btn">✕ 닫기</button>
+        </div>
+        
+        <!-- 이펙트 탭 -->
+  <div id="effectTabContent" class="tab-content">
+    <div style="background: rgba(255, 200, 100, 0.2); border: 2px solid rgba(255, 200, 100, 0.5); border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+        <p style="color: white; font-size: 1em; margin: 0;">
+             <strong>업데이트 보류 중</strong> <br>
+            <span style="font-size: 0.85em; opacity: 0.8;">이펙트 기능이 개선 중입니다</span>
+        </p>
+    </div>
+           
+        
         <button id="closeSpeedBtn" class="modal-close-btn">✕ 닫기</button>
     </div>
 </div>
@@ -1831,6 +2135,21 @@ const allSongsModal = document.getElementById('allSongsModal');
 const closeAllSongsBtn = document.getElementById('closeAllSongsBtn');
 const allSongsGrid = document.getElementById('allSongsGrid');
 
+// 노래 조정 관련 변수
+const speedTab = document.getElementById('speedTab');
+const effectTab = document.getElementById('effectTab');
+const speedTabContent = document.getElementById('speedTabContent');
+const effectTabContent = document.getElementById('effectTabContent');
+const reverbBtn = document.getElementById('reverbBtn');
+const bassBoostBtn = document.getElementById('bassBoostBtn');
+const eightDBtn = document.getElementById('eightDBtn');
+const normalEffectBtn = document.getElementById('normalEffectBtn');
+
+let currentEffect = 'normal';
+let isSuperSlowed = false;
+let isSuperSpedUp = false;
+let convolver, bassFilter, panner, eightDInterval;
+
 viewAllSongsBtn.addEventListener('click', () => {
     allSongsModal.style.display = 'block';
     loadAllSongsGrid();
@@ -1844,6 +2163,21 @@ allSongsModal.addEventListener('click', (e) => {
     if (e.target === allSongsModal) {
         allSongsModal.style.display = 'none';
     }
+});
+
+// 탭 전환
+speedTab?.addEventListener('click', () => {
+    speedTab.classList.add('active');
+    effectTab.classList.remove('active');
+    speedTabContent.classList.add('active');
+    effectTabContent.classList.remove('active');
+});
+
+effectTab?.addEventListener('click', () => {
+    effectTab.classList.add('active');
+    speedTab.classList.remove('active');
+    effectTabContent.classList.add('active');
+    speedTabContent.classList.remove('active');
 });
 
 function loadAllSongsGrid() {
@@ -2233,34 +2567,84 @@ speedModal.addEventListener('click', (e) => {
 });
 
 slowedBtn.addEventListener('click', () => {
-    currentSpeed = 0.9;
-    audio.playbackRate = 0.9;
-    audio.preservesPitch = false; // 피치도 함께 낮춤
-    updateSpeedButtons('slowed');
-    if (currentSong) {
-        songInfo.textContent = '⬇ Slowed - ' + currentSong.title;
+    if (currentSpeed === 0.9 && !isSuperSlowed) {
+        // Slowed 상태에서 다시 누르면 Super Slowed
+        currentSpeed = 0.8;
+        isSuperSlowed = true;
+        slowedBtn.classList.add('super');
+        slowedBtn.querySelector('.speed-value').textContent = '0.8x';
+    } else {
+        // 일반 Slowed로
+        currentSpeed = 0.9;
+        isSuperSlowed = false;
+        isSuperSpedUp = false;
+        slowedBtn.classList.remove('super');
+        spedUpBtn.classList.remove('super');
+        slowedBtn.querySelector('.speed-value').textContent = '0.9x';
+        spedUpBtn.querySelector('.speed-value').textContent = '1.1x';
     }
+
+      document.body.className = ''; // 기존 클래스 제거
+    if (isSuperSlowed) {
+        document.body.classList.add('speed-super-slowed');
+    } else {
+        document.body.classList.add('speed-slowed');
+    }
+    
+    audio.playbackRate = currentSpeed;
+    audio.preservesPitch = false;
+    updateSpeedButtons('slowed');
+    updateSongTitle();
 });
 
 normalSpeedBtn.addEventListener('click', () => {
     currentSpeed = 1.0;
+    isSuperSlowed = false;
+    isSuperSpedUp = false;
+    
+    // Super 표시 제거
+    slowedBtn.classList.remove('super');
+    spedUpBtn.classList.remove('super');
+    slowedBtn.querySelector('.speed-value').textContent = '0.9x';
+    spedUpBtn.querySelector('.speed-value').textContent = '1.1x';
+    
     audio.playbackRate = 1.0;
     audio.preservesPitch = true;
     updateSpeedButtons('normal');
-    if (currentSong) {
-        songInfo.textContent = '' + currentSong.title;
-    }
+    updateSongTitle();
 });
 
 // Sped Up 버튼 (1.3x 속도, 피치 높임)
 spedUpBtn.addEventListener('click', () => {
-    currentSpeed = 1.1;
-    audio.playbackRate = 1.1;
-    audio.preservesPitch = false; // 피치도 함께 높임
-    updateSpeedButtons('spedup');
-    if (currentSong) {
-        songInfo.textContent = '⬆ Sped Up - ' + currentSong.title;
+    if (currentSpeed === 1.1 && !isSuperSpedUp) {
+        // Sped Up 상태에서 다시 누르면 Super Sped Up
+        currentSpeed = 1.2;
+        isSuperSpedUp = true;
+        spedUpBtn.classList.add('super');
+        spedUpBtn.querySelector('.speed-value').textContent = '1.2x';
+    } else {
+        // 일반 Sped Up으로
+        currentSpeed = 1.1;
+        isSuperSpedUp = false;
+        isSuperSlowed = false;
+        spedUpBtn.classList.remove('super');
+        slowedBtn.classList.remove('super');
+        spedUpBtn.querySelector('.speed-value').textContent = '1.1x';
+        slowedBtn.querySelector('.speed-value').textContent = '0.9x';
     }
+
+       document.body.className = ''; // 기존 클래스 제거
+    if (isSuperSpedUp) {
+        document.body.classList.add('speed-super-spedup');
+    } else {
+        document.body.classList.add('speed-spedup');
+    }
+    
+    
+    audio.playbackRate = currentSpeed;
+    audio.preservesPitch = false;
+    updateSpeedButtons('spedup');
+    updateSongTitle();
 });
 
 // 버튼 활성화 상태 업데이트
@@ -2577,15 +2961,160 @@ audio.addEventListener('ended', () => {
        }
    });
 
-     function updateSongTitle(title) {
-       if (currentSpeed === 0.9) {
-           songInfo.textContent = '⬇ Slowed - ' + title;
-       } else if (currentSpeed === 1.1) {
-           songInfo.textContent = '⬆ Sped Up - ' + title;
-       } else {
-           songInfo.textContent = title;
-       }
-   }
+// 아래로 교체:
+function updateSongTitle() {
+    if (!currentSong) return;
+    
+    let prefix = '';
+    let title = currentSong.title;
+    
+
+    
+    // 속도 표시
+    if (isSuperSlowed) {
+        prefix = '⬇⬇ SUPER Slowed';
+    } else if (currentSpeed === 0.9) {
+        prefix = '⬇ Slowed';
+    } else if (isSuperSpedUp) {
+        prefix = '⬆⬆ SUPER Sped Up';
+    } else if (currentSpeed === 1.1) {
+        prefix = '⬆ Sped Up';
+    }
+    
+    // 이펙트 표시
+    if (currentEffect === 'bass') {
+        prefix += (prefix ? ' + ' : '') + '🔊 Bass';
+    } else if (currentEffect === 'reverb') {
+        prefix += (prefix ? ' + ' : '') + '🏛️ Reverb';
+    } else if (currentEffect === '8d') {
+        prefix += (prefix ? ' + ' : '') + '🎧 8D';
+    }
+    
+    songInfo.textContent = prefix ? `${prefix} - ${title}` : title;
+}
+
+// 이펙트 적용
+function applyEffect(effectType) {
+    if (!audioContext || !source) return;
+    
+    removeAllEffects();
+    currentEffect = effectType;
+    updateEffectButtons(effectType);
+    
+    try {
+        source.disconnect();
+    } catch (e) {}
+    
+    if (effectType === 'reverb') {
+        applyReverb();
+    } else if (effectType === 'bass') {
+        applyBassBoost();
+    } else if (effectType === '8d') {
+        apply8DAudio();
+    } else {
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+    }
+}
+
+function applyReverb() {
+    convolver = audioContext.createConvolver();
+    const sampleRate = audioContext.sampleRate;
+    const length = sampleRate * 0.6;  // 울림 시간 더 짧게
+    const impulse = audioContext.createBuffer(2, length, sampleRate);
+    
+    for (let channel = 0; channel < 2; channel++) {
+        const channelData = impulse.getChannelData(channel);
+        for (let i = 0; i < length; i++) {
+            channelData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 6) * 0.25;  
+            // 빠르게 감쇠, 볼륨 25%로 감소
+        }
+    }
+    
+    convolver.buffer = impulse;
+    
+    // Dry/Wet 믹스
+    const dryGain = audioContext.createGain();
+    const wetGain = audioContext.createGain();
+    const outputGain = audioContext.createGain();
+    
+    dryGain.gain.value = 0.70;  // 원본 소리 85%
+    wetGain.gain.value = 0.30;  // 울림 효과 15%만
+    
+    source.connect(dryGain);
+    source.connect(convolver);
+    convolver.connect(wetGain);
+    
+    dryGain.connect(outputGain);
+    wetGain.connect(outputGain);
+    outputGain.connect(analyser);
+    analyser.connect(audioContext.destination);
+}
+
+function applyBassBoost() {
+    bassFilter = audioContext.createBiquadFilter();
+    bassFilter.type = 'lowshelf';
+    bassFilter.frequency.value = 200;
+    bassFilter.gain.value = 18;
+    
+    source.connect(bassFilter);
+    bassFilter.connect(analyser);
+    analyser.connect(audioContext.destination);
+}
+
+function apply8DAudio() {
+    panner = audioContext.createStereoPanner();
+    let angle = 0;
+    eightDInterval = setInterval(() => {
+        angle += 0.04;
+        panner.pan.value = Math.sin(angle);
+    }, 50);
+    
+    source.connect(panner);
+    panner.connect(analyser);
+    analyser.connect(audioContext.destination);
+}
+
+function removeAllEffects() {
+    if (eightDInterval) {
+        clearInterval(eightDInterval);
+        eightDInterval = null;
+    }
+    if (convolver) { try { convolver.disconnect(); } catch (e) {} convolver = null; }
+    if (bassFilter) { try { bassFilter.disconnect(); } catch (e) {} bassFilter = null; }
+    if (panner) { try { panner.disconnect(); } catch (e) {} panner = null; }
+}
+
+function updateEffectButtons(active) {
+    [normalEffectBtn, bassBoostBtn, reverbBtn, eightDBtn].forEach(btn => {
+        btn?.classList.remove('active');
+    });
+    if (active === 'reverb') reverbBtn?.classList.add('active');
+    else if (active === 'bass') bassBoostBtn?.classList.add('active');
+    else if (active === '8d') eightDBtn?.classList.add('active');
+    else normalEffectBtn?.classList.add('active');
+}
+
+// 이펙트 버튼 이벤트
+normalEffectBtn?.addEventListener('click', () => applyEffect('normal'));
+bassBoostBtn?.addEventListener('click', () => applyEffect('bass'));
+reverbBtn?.addEventListener('click', () => applyEffect('reverb'));
+eightDBtn?.addEventListener('click', () => applyEffect('8d'));
+
+// 탭 전환
+speedTab?.addEventListener('click', () => {
+    speedTab.classList.add('active');
+    effectTab.classList.remove('active');
+    speedTabContent.classList.add('active');
+    effectTabContent.classList.remove('active');
+});
+
+effectTab?.addEventListener('click', () => {
+    effectTab.classList.add('active');
+    speedTab.classList.remove('active');
+    effectTabContent.classList.add('active');
+    speedTabContent.classList.remove('active');
+});
 
         prevBtn.addEventListener('click', () => {
                 if (!currentSong || !audio.duration) return; 
@@ -2693,7 +3222,9 @@ const dataIndex = Math.floor(Math.pow(i / barCount, 1.5) * bufferLength * 0.6);
                 ctx.stroke();
 
                 const bassAvg = dataArray.slice(0, 10).reduce((a, b) => a + b, 0) / 10;
+             
                 const pulseRadius = radius * 0.3 + (bassAvg / 255) * (radius * 0.3);
+                
                 
                 const pulseGradient = ctx.createRadialGradient(
                     centerX, centerY, 0,
