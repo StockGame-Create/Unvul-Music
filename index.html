@@ -279,6 +279,73 @@
     border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
+@media (max-width: 768px) {
+    #queueModalContent {
+        width: 95%;
+        max-height: 85vh;
+        padding: 15px;
+        border-radius: 15px;
+    }
+    
+    #queueModalContent h2 {
+        font-size: 1.3em;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    
+    .queue-section {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .available-songs, .selected-queue {
+        max-height: 25vh;
+        overflow-y: auto;
+    }
+    
+    .song-option, .queue-item {
+        padding: 12px 10px;
+        font-size: 0.95em;
+        touch-action: manipulation;
+    }
+    
+    .queue-number {
+        min-width: 28px;
+        padding: 4px 8px;
+        font-size: 0.9em;
+    }
+    
+    .remove-queue-btn {
+        padding: 6px 12px;
+        font-size: 0.9em;
+        min-width: 40px;
+    }
+    
+    .queue-loop-option {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .queue-loop-label {
+        font-size: 1em;
+    }
+    
+    .queue-buttons {
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 15px;
+    }
+    
+    .queue-buttons button {
+        width: 100%;
+        padding: 14px;
+        font-size: 1em;
+        border-radius: 10px;
+    }
+}
+
+
+
 #queueModalContent h2 {
     margin-bottom: 20px;
     color: white;
@@ -386,6 +453,69 @@
     cursor: pointer;
     font-size: 0.9em;
     transition: all 0.3s;
+}
+
+@media (max-width: 768px) {
+    #speedModalContent {
+        padding: 20px 15px;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 400px;
+    }
+    
+    #speedModalContent h2 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+    
+    .speed-options {
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .speed-option {
+        padding: 20px 15px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        min-width: auto;
+        width: 100%;
+        gap: 15px;
+        touch-action: manipulation;
+    }
+    
+    .speed-option:active {
+        transform: scale(0.98);
+    }
+    
+    .speed-icon {
+        font-size: 2em;
+        flex-shrink: 0;
+    }
+    
+    .speed-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex: 1;
+    }
+    
+    .speed-name {
+        font-size: 1.1em;
+    }
+    
+    .speed-value {
+        font-size: 0.85em;
+        margin-top: 2px;
+    }
+    
+    .modal-close-btn {
+        width: 100%;
+        padding: 14px;
+        font-size: 1em;
+        border-radius: 10px;
+    }
 }
 
 #speedControlBtn:hover {
@@ -1536,11 +1666,11 @@
         <div id="songInfo">노래를 선택하세요</div>
         <button id="toggleControlsBtn">▼</button>
         <div id="controls">
-            <button id="stopBtn">⏹ 정지</button>
+            <button id="stopBtn">◼ 정지</button>
             <button id="prevBtn">⏮ -10초</button>
   
             <button id="playBtn">▶ 재생</button>
-            <button id="pauseBtn" style="display:none;">⏸ 일시정지</button>
+            <button id="pauseBtn" style="display:none;">❚❚ 일시정지</button>
             <button id="nextBtn">⏭ +10초</button>
               <button id="loopBtn">↺ 반복</button> 
         </div>
@@ -1930,6 +2060,8 @@ function releaseWakeLock() {
         console.log('화면 자동 꺼짐 방지 해제');
     }
 }
+
+
 
 // 재생목록 취소 버튼
 cancelQueueBtn.addEventListener('click', () => {
