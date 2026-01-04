@@ -1875,6 +1875,32 @@ body.speed-super-spedup::before {
     animation: bluePulse 2s ease-in-out infinite;
 }
 
+@media (max-width: 768px) {
+    #toggleControlsBtn {
+        bottom: 195px;  /* 이 값을 줄이세요 (예: 150px) */
+        left: 50%;
+        transform: translateX(-50%) scale(0.8);
+        z-index: 100;
+    }
+    
+    #controls {
+        bottom: 120px;  /* 이 값을 줄이세요 (예: 110px) */
+        padding-top: 20px;
+    }
+    
+    #progress-container {
+        bottom: 75px;  /* 이 값을 줄이세요 (예: 70px) */
+    }
+    
+    #volumeToggleBtn {
+        bottom: 20px;  /* 이 값을 줄이세요 (예: 15px) */
+    }
+    
+    #volumeControl {
+        bottom: 75px;  /* 이 값을 줄이세요 (예: 60px) */
+    }
+}
+
 /* 펄스 애니메이션 */
 @keyframes redPulse {
     0%, 100% {
@@ -1961,6 +1987,8 @@ body.speed-super-spedup::before {
 }
 
 
+
+
     </style>
 </head>
 <body>
@@ -2028,7 +2056,9 @@ body.speed-super-spedup::before {
             <h2 style="color: white; font-size: 2em; text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);">📀_LIST_📀</h2>
             <button id="closeAllSongsBtn" style="background: rgba(255, 100, 100, 0.3); border: 2px solid rgba(255, 100, 100, 0.5); color: white; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-size: 1.1em;">✕ 닫기</button>
         </div>
+      
         <div id="allSongsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px;"></div>
+    <h5>(MADE BY UNVUL) 문의는 여기로 -> https://sites.google.com/view/unvulnerable/%EB%AC%B8%EC%9D%98-%EB%B0%8F-%EC%B0%B8%EC%97%AC?authuser=0</h5>
     </div>
 </div>
 
