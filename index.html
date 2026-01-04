@@ -2298,7 +2298,200 @@ allSongsModal.addEventListener('click', (e) => {
     }
 });
 
+// ===== index.html의 <script> 태그 안에 이 코드를 추가하세요 =====
 
+// GitHub 설정
+const GITHUB_CONFIG = {
+    username: 'StockGame-Create',
+    repo: 'Unvul-Music',
+    branch: 'main' // 또는 'master'
+};
+
+// 커뮤니티 노래 목록 가져오기
+async function loadCommunitySongs() {
+    try {
+        const url = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/community`;
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            // community 폴더가 없으면 빈 배열 반환
+            return [];
+        }
+        
+        const files = await response.json();
+        
+        // MP3 파일만 필터링
+        const mp3Files = files.filter(file => file.name.endsWith('.mp3'));
+        
+        // 노래 정보 구성
+        const songs = mp3Files.map(file => {
+            const title = file.name.replace('.mp3', '');
+            const iconName = title + '.jpg';
+            
+            // 파일이 있는지 확인
+            const hasIcon = files.some(f => f.name === iconName);
+            
+            return {
+                title: title,
+                src: `https://raw.githubusercontent.com/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/community/${file.name}`,
+                icon: hasIcon ? `https://raw.githubusercontent.com/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/community/${iconName}` : null
+            };
+        });
+        
+        return songs;
+    } catch (error) {
+        console.error('커뮤니티 노래 로드 실패:', error);
+        return [];
+    }
+}
+
+// 기존 loadAllSongsGrid 함수를 수정
+async function loadAllSongsGridWithCommunity() {
+    allSongsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px;">로딩 중...</div>';
+    
+    // 탭 버튼 추가
+    const tabsHTML = `
+        <div style="grid-column: 1/-1; display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+            <button id="officialTab" class="modal-tab active" style="flex: 1; padding: 15px; background: rgba(102, 126, 234, 0.3); border: 2px solid rgba(102, 126, 234, 0.8); color: white; border-radius: 10px; cursor: pointer; font-size: 1.1em; font-weight: bold;">
+                🎵 공식 노래
+            </button>
+            <button id="communityTab" class="modal-tab" style="flex: 1; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.2); color: rgba(255,255,255,0.6); border-radius: 10px; cursor: pointer; font-size: 1.1em; font-weight: bold;">
+                👥 커뮤니티
+            </button>
+        </div>
+        <div id="songsContent" style="grid-column: 1/-1; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px;"></div>
+    `;
+    
+    allSongsGrid.innerHTML = tabsHTML;
+    
+    const songsContent = document.getElementById('songsContent');
+    const officialTab = document.getElementById('officialTab');
+    const communityTab = document.getElementById('communityTab');
+    
+    // 공식 노래 로드
+    function loadOfficialSongs() {
+        officialTab.style.background = 'rgba(102, 126, 234, 0.3)';
+        officialTab.style.borderColor = 'rgba(102, 126, 234, 0.8)';
+        officialTab.style.color = 'white';
+        communityTab.style.background = 'rgba(255, 255, 255, 0.05)';
+        communityTab.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+        communityTab.style.color = 'rgba(255,255,255,0.6)';
+        
+        songsContent.innerHTML = '';
+        const allSongs = document.querySelectorAll('.playlist-item');
+        
+        // 랜덤 카드
+        const randomCard = document.createElement('div');
+        randomCard.className = 'album-card';
+        randomCard.style.background = 'linear-gradient(135deg, rgba(255, 100, 200, 0.3), rgba(100, 200, 255, 0.3))';
+        randomCard.innerHTML = `
+            <div class="album-card-icon" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #ff64c8, #64c8ff); font-size: 4em; border: 3px solid rgba(255, 255, 255, 0.8);">⇄</div>
+            <div class="album-card-title" style="font-size: 1.2em; color: #fff;">랜덤 플레이</div>
+            <button class="album-card-play" style="background: linear-gradient(135deg, #ff64c8, #64c8ff);">⇄ 랜덤 재생</button>
+        `;
+        randomCard.addEventListener('click', () => {
+            allSongsModal.style.display = 'none';
+            showRandomAnimation(Array.from(allSongs).map(item => ({
+                element: item,
+                src: item.getAttribute('data-src'),
+                icon: item.getAttribute('data-icon'),
+                title: item.textContent
+            })));
+        });
+        songsContent.appendChild(randomCard);
+        
+        // 일반 노래들
+        allSongs.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'album-card';
+            const iconSrc = item.getAttribute('data-icon') || 'default-album.png';
+            card.innerHTML = `
+                <img src="${iconSrc}" class="album-card-icon" alt="${item.textContent}">
+                <div class="album-card-title">${item.textContent}</div>
+                <button class="album-card-play">▶ 재생</button>
+            `;
+            card.addEventListener('click', () => {
+                loadSong(item);
+                allSongsModal.style.display = 'none';
+            });
+            songsContent.appendChild(card);
+        });
+    }
+    
+    // 커뮤니티 노래 로드
+    async function loadCommunityView() {
+        officialTab.style.background = 'rgba(255, 255, 255, 0.05)';
+        officialTab.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+        officialTab.style.color = 'rgba(255,255,255,0.6)';
+        communityTab.style.background = 'rgba(255, 100, 200, 0.3)';
+        communityTab.style.borderColor = 'rgba(255, 100, 200, 0.8)';
+        communityTab.style.color = 'white';
+        
+        songsContent.innerHTML = '<div style="text-align: center; padding: 40px; color: white;">커뮤니티 노래 로딩 중... ⏳</div>';
+        
+        const communitySongs = await loadCommunitySongs();
+        
+        songsContent.innerHTML = '';
+        
+        if (communitySongs.length === 0) {
+            songsContent.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: rgba(255,255,255,0.6);">
+                    <div style="font-size: 4em; margin-bottom: 20px;">😢</div>
+                    <h3 style="margin-bottom: 10px;">아직 커뮤니티 노래가 없습니다</h3>
+                    <p>첫 번째 커뮤니티 노래를 추가해보세요!</p>
+                </div>
+            `;
+            return;
+        }
+        
+        communitySongs.forEach(song => {
+            const card = document.createElement('div');
+            card.className = 'album-card';
+            card.style.border = '2px solid rgba(255, 100, 200, 0.5)';
+            card.innerHTML = `
+                <img src="${song.icon}" class="album-card-icon" alt="${song.title}">
+                <div class="album-card-title">👥 ${song.title}</div>
+                <button class="album-card-play" style="background: linear-gradient(135deg, #ff64c8, #764ba2);">▶ 재생</button>
+            `;
+            card.addEventListener('click', () => {
+                // 커뮤니티 노래 재생
+                currentSong = song;
+                audio.src = song.src;
+                audio.playbackRate = currentSpeed;
+                audio.preservesPitch = (currentSpeed === 1.0);
+                songInfo.textContent = '👥 ' + song.title;
+                
+                if (song.icon) {
+                    albumArt.src = song.icon;
+                    albumArt.classList.add('show');
+                    albumBg.src = song.icon;
+                    albumBg.classList.add('show');
+                }
+                
+                setupAudio();
+                audio.play();
+                isPlaying = true;
+                visualize();
+                playBtn.style.display = 'none';
+                pauseBtn.style.display = 'inline-block';
+                
+                allSongsModal.style.display = 'none';
+            });
+            songsContent.appendChild(card);
+        });
+    }
+    
+    // 탭 클릭 이벤트
+    officialTab.addEventListener('click', loadOfficialSongs);
+    communityTab.addEventListener('click', loadCommunityView);
+    
+    // 처음엔 공식 노래 표시
+    loadOfficialSongs();
+}
+
+// 기존 loadAllSongsGrid 함수 대체
+const originalLoadAllSongsGrid = loadAllSongsGrid;
+loadAllSongsGrid = loadAllSongsGridWithCommunity;
 
 // 탭 전환
 speedTab?.addEventListener('click', () => {
