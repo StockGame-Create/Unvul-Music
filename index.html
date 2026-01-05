@@ -22,6 +22,107 @@
             overflow: hidden;
         }
         
+/* ===== 모두 보기 모달 개선 ===== */
+
+/* 검색 바 스타일 */
+.community-search {
+    margin-bottom: 25px;
+    display: none;
+}
+
+.community-search.show {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.community-search input {
+    width: 100%;
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 100, 200, 0.3);
+    border-radius: 15px;
+    color: white;
+    font-size: 1.1em;
+    transition: all 0.3s;
+}
+
+.community-search input:focus {
+    outline: none;
+    border-color: rgba(255, 100, 200, 0.8);
+    box-shadow: 0 0 20px rgba(255, 100, 200, 0.3);
+}
+
+.community-search input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+    #allSongsModal {
+        padding: 10px;
+    }
+    
+    .modal-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .modal-title {
+        font-size: 1.5em;
+        text-align: center;
+    }
+    
+    #closeAllSongsBtn {
+        width: 100%;
+    }
+    
+    #allSongsGrid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+        gap: 15px !important;
+    }
+    
+    .album-card {
+        padding: 12px;
+    }
+    
+    .album-card-title {
+        font-size: 0.85em;
+    }
+    
+    .album-card-play {
+        padding: 8px 12px;
+        font-size: 0.85em;
+    }
+    
+    .modal-tabs {
+        flex-direction: row;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .modal-tab {
+        min-width: 120px;
+        padding: 12px 15px;
+        font-size: 0.9em;
+    }
+    
+    .community-search input {
+        padding: 12px 15px;
+        font-size: 1em;
+    }
+}
+
      #playlist {
     background: rgba(20, 20, 20, 0.95);
     padding: 10px 20px;
@@ -1952,6 +2053,149 @@ body.speed-super-spedup::before {
     color: #ffcc00;
 }
 
+/* 기존 CSS에 추가 - 모바일 UI 대폭 개선 */
+
+@media (max-width: 768px) {
+    /* 모달 전체 */
+    #allSongsModal {
+        padding: 0;
+    }
+    
+    #allSongsModal > div {
+        padding: 15px 10px;
+    }
+    
+    /* 헤더 - 제목 + 닫기 버튼 */
+    #allSongsModal > div > div:first-child {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 0 10px;
+    }
+    
+    #allSongsModal h2 {
+        font-size: 1.5em !important;
+        margin-bottom: 0 !important;
+    }
+    
+    #closeAllSongsBtn {
+        padding: 10px 20px !important;
+        font-size: 1em !important;
+        white-space: nowrap;
+    }
+    
+    /* 탭 버튼 - 더 크고 터치하기 쉽게 */
+    .modal-tab {
+        min-width: 140px !important;
+        padding: 18px 12px !important;
+        font-size: 1em !important;
+        border-radius: 12px !important;
+        touch-action: manipulation;
+    }
+    
+    /* 탭 컨테이너 - 스크롤 힌트 */
+    [style*="border-bottom"][style*="padding-bottom"] {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 15px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    [style*="border-bottom"][style*="padding-bottom"]::-webkit-scrollbar {
+        display: none;
+    }
+    
+    /* 검색창 - 더 크게 */
+    #communitySearchInput {
+        padding: 18px 20px !important;
+        font-size: 1.05em !important;
+        border-radius: 12px !important;
+        touch-action: manipulation;
+    }
+    
+    #communitySearchContainer {
+        margin-bottom: 15px !important;
+        padding: 0 5px;
+    }
+    
+    /* 그리드 - 카드 크기 조정 */
+    #songsContent {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
+        gap: 12px !important;
+        padding: 0 5px;
+    }
+    
+    /* 앨범 카드 */
+    .album-card {
+        padding: 12px !important;
+        border-radius: 12px !important;
+        transition: transform 0.2s;
+    }
+    
+    .album-card:active {
+        transform: scale(0.95);
+    }
+    
+    .album-card-icon {
+        border-radius: 10px !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .album-card-title {
+        font-size: 0.9em !important;
+        margin-bottom: 10px !important;
+        line-height: 1.3;
+        min-height: 2.6em;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+
+    
+    .album-card-play {
+        padding: 12px 10px !important;
+        font-size: 0.9em !important;
+        border-radius: 8px !important;
+        width: 100%;
+        touch-action: manipulation;
+    }
+    
+    .album-card-play:active {
+        transform: scale(0.95);
+    }
+    
+    /* 빈 상태 메시지 */
+    [style*="grid-column: 1/-1"] {
+        padding: 30px 15px !important;
+    }
+    
+    [style*="grid-column: 1/-1"] h3 {
+        font-size: 1.2em !important;
+    }
+    
+    [style*="grid-column: 1/-1"] p {
+        font-size: 0.95em !important;
+    }
+}
+
+/* 가로 스크롤 힌트 (탭) */
+@media (max-width: 768px) {
+    [style*="border-bottom"][style*="padding-bottom"]::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 15px;
+        width: 30px;
+        background: linear-gradient(to right, transparent, rgba(0,0,0,0.3));
+        pointer-events: none;
+    }
+}
+
 /* 모바일 최적화 */
 @media (max-width: 768px) {
     #speedModalContent {
@@ -1986,6 +2230,193 @@ body.speed-super-spedup::before {
     }
 }
 
+/* ===== 모바일 All Songs Modal 완전 개선 ===== */
+@media (max-width: 768px) {
+    /* 모달 전체 */
+    #allSongsModal {
+        padding: 10px;
+    }
+    
+    #allSongsModal > div {
+        padding: 0;
+        max-width: 100%;
+    }
+    
+    /* 최상위 컨테이너 */
+    #allSongsModal > div > div {
+        padding: 15px 10px;
+    }
+    
+    /* 헤더 영역 - 세로 배치 */
+    #allSongsModal h2 {
+        font-size: 1.3em !important;
+        text-align: center;
+        margin-bottom: 15px !important;
+        display: block;
+        width: 100%;
+    }
+    
+    /* 커뮤니티 추가 버튼 + 닫기 버튼 */
+    #allSongsModal > div > div:first-child > div {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        width: 100% !important;
+        margin-top: 10px;
+    }
+    
+    #addCommunityBtn,
+    #closeAllSongsBtn {
+        width: 100% !important;
+        padding: 14px 20px !important;
+        font-size: 1em !important;
+        text-align: center;
+        justify-content: center;
+    }
+    
+    /* 탭 영역 */
+    #allSongsModal [style*="border-bottom"] {
+        display: flex !important;
+        gap: 8px !important;
+        margin-bottom: 15px !important;
+        padding-bottom: 12px !important;
+        overflow-x: visible !important;
+        flex-wrap: wrap !important;
+    }
+    
+    /* 탭 버튼 */
+    #officialTab,
+    #communityTab {
+        flex: 1 !important;
+        min-width: calc(50% - 4px) !important;
+        padding: 16px 10px !important;
+        font-size: 0.95em !important;
+        border-radius: 10px !important;
+        white-space: nowrap;
+    }
+    
+    /* 검색창 */
+    #communitySearchContainer {
+        margin-bottom: 15px !important;
+        padding: 0 !important;
+    }
+    
+    #communitySearchInput {
+        width: 100% !important;
+        padding: 16px 15px !important;
+        font-size: 1em !important;
+        border-radius: 10px !important;
+    }
+    
+    /* 노래 그리드 */
+    #songsContent {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        padding: 0 !important;
+    }
+    
+    /* 앨범 카드 */
+    .album-card {
+        padding: 10px !important;
+        border-radius: 10px !important;
+    }
+    
+    .album-card-icon {
+        width: 100% !important;
+        aspect-ratio: 1 !important;
+        border-radius: 8px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .album-card-title {
+        font-size: 0.85em !important;
+        margin-bottom: 8px !important;
+        line-height: 1.2;
+        height: 2.4em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    
+    .album-card-play {
+        width: 100% !important;
+        padding: 10px 8px !important;
+        font-size: 0.85em !important;
+        border-radius: 8px !important;
+    }
+    
+    /* 터치 피드백 */
+    .album-card:active {
+        transform: scale(0.97);
+        opacity: 0.9;
+    }
+    
+    .album-card-play:active {
+        transform: scale(0.95);
+    }
+    
+    /* 빈 상태 */
+    #songsContent > div[style*="grid-column"] {
+        grid-column: 1 / -1 !important;
+        padding: 40px 20px !important;
+        text-align: center;
+    }
+    
+    #songsContent > div[style*="grid-column"] h3 {
+        font-size: 1.1em !important;
+        margin-bottom: 10px;
+    }
+    
+    #songsContent > div[style*="grid-column"] p {
+        font-size: 0.9em !important;
+    }
+}
+
+/* 큐 모달 검색창 스타일 */
+#queueSearchInput:focus {
+    outline: none;
+    border-color: rgba(255, 100, 200, 0.8);
+    box-shadow: 0 0 15px rgba(255, 100, 200, 0.3);
+}
+
+#queueSearchInput::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* 커뮤니티 노래 스타일 */
+.song-option[data-type="community"] {
+    border-left: 4px solid rgba(255, 100, 200, 0.8);
+    background: linear-gradient(90deg, rgba(255, 100, 200, 0.15), rgba(255, 255, 255, 0.1));
+}
+
+.song-option[data-type="community"]:hover {
+    background: linear-gradient(90deg, rgba(255, 100, 200, 0.3), rgba(100, 200, 100, 0.3));
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+    #queueModal [style*="display: flex"][style*="gap: 15px"] {
+        flex-direction: column;
+        gap: 10px !important;
+        padding: 10px !important;
+    }
+    
+    #queueModal label {
+        width: 100%;
+        justify-content: center;
+        padding: 10px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 8px;
+    }
+    
+    #queueSearchInput {
+        padding: 14px 16px !important;
+        font-size: 0.95em !important;
+    }
+}
 
 
 
@@ -2051,14 +2482,20 @@ body.speed-super-spedup::before {
 
 
         <div id="allSongsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 300; overflow-y: auto;">
+  
     <div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <h2 style="color: white; font-size: 2em; text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);">📀_LIST_📀</h2>
-            <button id="closeAllSongsBtn" style="background: rgba(255, 100, 100, 0.3); border: 2px solid rgba(255, 100, 100, 0.5); color: white; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-size: 1.1em;">✕ 닫기</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; gap: 10px; flex-wrap: wrap;">
+            <h2 style="color: white; font-size: 2em; text-shadow: 0 0 20px rgba(100, 200, 255, 0.5); margin: 0;">📀_LIST_📀</h2>
+            <div style="display: flex; gap: 10px;">
+                <a href="https://unvulmus-community.vercel.app/" target="_blank" id="addCommunityBtn" style="background: linear-gradient(135deg, #ff64c8, #764ba2); border: 2px solid rgba(255, 100, 200, 0.5); color: white; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-size: 1.1em; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: all 0.3s; font-weight: bold;">
+                    + 커뮤니티 노래 추가
+                </a>
+                <button id="closeAllSongsBtn" style="background: rgba(255, 100, 100, 0.3); border: 2px solid rgba(255, 100, 100, 0.5); color: white; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-size: 1.1em;">✕ 닫기</button>
+            </div>
         </div>
       
         <div id="allSongsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px;"></div>
-    <h5>(MADE BY UNVUL) 문의는 여기로 -> https://sites.google.com/view/unvulnerable/%EB%AC%B8%EC%9D%98-%EB%B0%8F-%EC%B0%B8%EC%97%AC?authuser=0</h5>
+    <h5></h5>
     </div>
 </div>
 
@@ -2102,6 +2539,24 @@ body.speed-super-spedup::before {
     <div id="queueModal">
     <div id="queueModalContent">
         <h2>🎵 재생목록 만들기 (최대 8개)</h2>
+        
+        <!-- 필터 체크박스 추가 -->
+        <div style="display: flex; gap: 15px; align-items: center; justify-content: center; margin-bottom: 15px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="queueShowOfficialCheck" checked style="cursor: pointer; width: 18px; height: 18px; accent-color: #64c8ff;">
+                <span style="color: white; font-size: 1em;">🎵 공식 보이기</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="queueShowCommunityCheck" style="cursor: pointer; width: 18px; height: 18px; accent-color: #ff64c8;">
+                <span style="color: white; font-size: 1em;">👥 커뮤니티 보이기</span>
+            </label>
+        </div>
+        
+        <!-- 검색창 (커뮤니티 활성화시만 표시) -->
+        <div id="queueSearchContainer" style="display: none; margin-bottom: 15px;">
+            <input type="text" id="queueSearchInput" placeholder="🔍 커뮤니티 노래 검색..." style="width: 100%; padding: 12px 18px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,100,200,0.3); border-radius: 10px; color: white; font-size: 1em;">
+        </div>
+        
         <div class="queue-section">
             <div class="available-songs">
                 <h3>사용 가능한 노래</h3>
@@ -2111,8 +2566,9 @@ body.speed-super-spedup::before {
                 <h3>선택한 재생목록</h3>
                 <div id="selectedQueueList"></div>
             </div>
-            </div>
-           <div class="queue-loop-option" id="queueLoopOption">
+        </div>
+        
+        <div class="queue-loop-option" id="queueLoopOption">
             <input type="checkbox" id="queueLoopCheckbox">
             <label class="queue-loop-label" for="queueLoopCheckbox">
                 재생목록 반복 재생
@@ -2210,6 +2666,10 @@ body.speed-super-spedup::before {
         const ctx = canvas.getContext('2d');
         const toggleQueueDisplayBtn = document.getElementById('toggleQueueDisplayBtn');
 let queueContentVisible = true;
+const queueShowOfficialCheck = document.getElementById('queueShowOfficialCheck');
+const queueShowCommunityCheck = document.getElementById('queueShowCommunityCheck');
+const queueSearchContainer = document.getElementById('queueSearchContainer');
+const queueSearchInput = document.getElementById('queueSearchInput');
         const albumBg = document.getElementById('album-bg');
         const audio = document.getElementById('audio');
         const playBtn = document.getElementById('playBtn');
@@ -2307,6 +2767,21 @@ const GITHUB_CONFIG = {
     branch: 'main' // 또는 'master'
 };
 
+queueShowOfficialCheck.addEventListener('change', loadAvailableSongs);
+queueShowCommunityCheck.addEventListener('change', () => {
+    loadAvailableSongs();
+    // 커뮤니티 체크시 검색창 표시
+    if (queueShowCommunityCheck.checked) {
+        queueSearchContainer.style.display = 'block';
+    } else {
+        queueSearchContainer.style.display = 'none';
+        queueSearchInput.value = '';
+    }
+});
+
+// 검색 기능
+queueSearchInput.addEventListener('input', loadAvailableSongs);
+
 // 커뮤니티 노래 목록 가져오기
 async function loadCommunitySongs() {
     try {
@@ -2345,19 +2820,22 @@ async function loadCommunitySongs() {
     }
 }
 
-// 기존 loadAllSongsGrid 함수를 수정
+/// 기존 loadAllSongsGrid 함수를 수정
 async function loadAllSongsGridWithCommunity() {
     allSongsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px;">로딩 중...</div>';
     
-    // 탭 버튼 추가
+    // 탭 버튼 + 검색창 추가
     const tabsHTML = `
-        <div style="grid-column: 1/-1; display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
-            <button id="officialTab" class="modal-tab active" style="flex: 1; padding: 15px; background: rgba(102, 126, 234, 0.3); border: 2px solid rgba(102, 126, 234, 0.8); color: white; border-radius: 10px; cursor: pointer; font-size: 1.1em; font-weight: bold;">
+        <div style="grid-column: 1/-1; display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 10px; flex-wrap: wrap;">
+            <button id="officialTab" class="modal-tab active" style="flex: 1; min-width: 150px; padding: 15px; background: rgba(102, 126, 234, 0.3); border: 2px solid rgba(102, 126, 234, 0.8); color: white; border-radius: 10px; cursor: pointer; font-size: 1.1em; font-weight: bold;">
                 🎵 공식 노래
             </button>
-            <button id="communityTab" class="modal-tab" style="flex: 1; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.2); color: rgba(255,255,255,0.6); border-radius: 10px; cursor: pointer; font-size: 1.1em; font-weight: bold;">
+            <button id="communityTab" class="modal-tab" style="flex: 1; min-width: 150px; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.2); color: rgba(255,255,255,0.6); border-radius: 10px; cursor: pointer; font-size: 1.1em; font-weight: bold;">
                 👥 커뮤니티
             </button>
+        </div>
+        <div id="communitySearchContainer" style="grid-column: 1/-1; margin-bottom: 20px; display: none;">
+            <input type="text" id="communitySearchInput" placeholder="커뮤니티 노래 검색..." style="width: 100%; padding: 15px 20px; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 100, 200, 0.3); border-radius: 15px; color: white; font-size: 1.1em;">
         </div>
         <div id="songsContent" style="grid-column: 1/-1; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px;"></div>
     `;
@@ -2367,6 +2845,10 @@ async function loadAllSongsGridWithCommunity() {
     const songsContent = document.getElementById('songsContent');
     const officialTab = document.getElementById('officialTab');
     const communityTab = document.getElementById('communityTab');
+    const searchContainer = document.getElementById('communitySearchContainer');
+    const searchInput = document.getElementById('communitySearchInput');
+    
+    let allCommunitySongs = [];
     
     // 공식 노래 로드
     function loadOfficialSongs() {
@@ -2376,9 +2858,22 @@ async function loadAllSongsGridWithCommunity() {
         communityTab.style.background = 'rgba(255, 255, 255, 0.05)';
         communityTab.style.borderColor = 'rgba(255, 255, 255, 0.2)';
         communityTab.style.color = 'rgba(255,255,255,0.6)';
+        searchContainer.style.display = 'none';
         
         songsContent.innerHTML = '';
         const allSongs = document.querySelectorAll('.playlist-item');
+        
+        // 노래 데이터 수집 및 정렬
+        const songsArray = [];
+        allSongs.forEach((item) => {
+            songsArray.push({
+                element: item,
+                src: item.getAttribute('data-src'),
+                icon: item.getAttribute('data-icon'),
+                title: item.textContent
+            });
+        });
+        songsArray.sort((a, b) => a.title.localeCompare(b.title));
         
         // 랜덤 카드
         const randomCard = document.createElement('div');
@@ -2391,70 +2886,53 @@ async function loadAllSongsGridWithCommunity() {
         `;
         randomCard.addEventListener('click', () => {
             allSongsModal.style.display = 'none';
-            showRandomAnimation(Array.from(allSongs).map(item => ({
-                element: item,
-                src: item.getAttribute('data-src'),
-                icon: item.getAttribute('data-icon'),
-                title: item.textContent
-            })));
+            showRandomAnimation(songsArray);
         });
         songsContent.appendChild(randomCard);
         
         // 일반 노래들
-        allSongs.forEach(item => {
+        songsArray.forEach((songData) => {
             const card = document.createElement('div');
             card.className = 'album-card';
-            const iconSrc = item.getAttribute('data-icon') || 'default-album.png';
+            const iconSrc = songData.icon || 'default-album.png';
             card.innerHTML = `
-                <img src="${iconSrc}" class="album-card-icon" alt="${item.textContent}">
-                <div class="album-card-title">${item.textContent}</div>
+                <img src="${iconSrc}" class="album-card-icon" alt="${songData.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%23333%22/%3E%3Ctext x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2220%22%3E🎵%3C/text%3E%3C/svg%3E'">
+                <div class="album-card-title">${songData.title}</div>
                 <button class="album-card-play">▶ 재생</button>
             `;
             card.addEventListener('click', () => {
-                loadSong(item);
+                loadSong(songData.element);
                 allSongsModal.style.display = 'none';
             });
             songsContent.appendChild(card);
         });
     }
     
-    // 커뮤니티 노래 로드
-    async function loadCommunityView() {
-        officialTab.style.background = 'rgba(255, 255, 255, 0.05)';
-        officialTab.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-        officialTab.style.color = 'rgba(255,255,255,0.6)';
-        communityTab.style.background = 'rgba(255, 100, 200, 0.3)';
-        communityTab.style.borderColor = 'rgba(255, 100, 200, 0.8)';
-        communityTab.style.color = 'white';
-        
-        songsContent.innerHTML = '<div style="text-align: center; padding: 40px; color: white;">커뮤니티 노래 로딩 중... ⏳</div>';
-        
-        const communitySongs = await loadCommunitySongs();
-        
+    // 커뮤니티 노래 표시 (필터링 적용)
+    function displayCommunitySongs(songs) {
         songsContent.innerHTML = '';
         
-        if (communitySongs.length === 0) {
+        if (songs.length === 0) {
             songsContent.innerHTML = `
                 <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: rgba(255,255,255,0.6);">
-                    <div style="font-size: 4em; margin-bottom: 20px;">😢</div>
-                    <h3 style="margin-bottom: 10px;">아직 커뮤니티 노래가 없습니다</h3>
-                    <p>첫 번째 커뮤니티 노래를 추가해보세요!</p>
+                    <div style="font-size: 4em; margin-bottom: 20px;">🔍</div>
+                    <h3 style="margin-bottom: 10px;">검색 결과가 없습니다</h3>
+                    <p>다른 검색어를 입력해보세요</p>
                 </div>
             `;
             return;
         }
         
-        communitySongs.forEach(song => {
+        songs.forEach(song => {
             const card = document.createElement('div');
             card.className = 'album-card';
             card.style.border = '2px solid rgba(255, 100, 200, 0.5)';
             card.innerHTML = `
-                <img src="${song.icon}" class="album-card-icon" alt="${song.title}">
+                <img src="${song.icon}" class="album-card-icon" alt="${song.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%23ff64c8%22/%3E%3Ctext x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2220%22%3E👥%3C/text%3E%3C/svg%3E'">
                 <div class="album-card-title">👥 ${song.title}</div>
                 <button class="album-card-play" style="background: linear-gradient(135deg, #ff64c8, #764ba2);">▶ 재생</button>
             `;
             card.addEventListener('click', () => {
-                // 커뮤니티 노래 재생
                 currentSong = song;
                 audio.src = song.src;
                 audio.playbackRate = currentSpeed;
@@ -2480,6 +2958,53 @@ async function loadAllSongsGridWithCommunity() {
             songsContent.appendChild(card);
         });
     }
+    
+    // 커뮤니티 노래 로드
+    async function loadCommunityView() {
+        officialTab.style.background = 'rgba(255, 255, 255, 0.05)';
+        officialTab.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+        officialTab.style.color = 'rgba(255,255,255,0.6)';
+        communityTab.style.background = 'rgba(255, 100, 200, 0.3)';
+        communityTab.style.borderColor = 'rgba(255, 100, 200, 0.8)';
+        communityTab.style.color = 'white';
+        searchContainer.style.display = 'block';
+        
+        songsContent.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: white;">커뮤니티 노래 로딩 중... ⏳</div>';
+        
+        const communitySongs = await loadCommunitySongs();
+        allCommunitySongs = communitySongs;
+        
+        if (communitySongs.length === 0) {
+            songsContent.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: rgba(255,255,255,0.6);">
+                    <div style="font-size: 4em; margin-bottom: 20px;">😢</div>
+                    <h3 style="margin-bottom: 10px;">아직 커뮤니티 노래가 없습니다</h3>
+                    <p>첫 번째 커뮤니티 노래를 추가해보세요!</p>
+                </div>
+            `;
+        } else {
+            displayCommunitySongs(communitySongs);
+        }
+    }
+    
+    // 검색 기능
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filtered = allCommunitySongs.filter(song => 
+            song.title.toLowerCase().includes(searchTerm)
+        );
+        displayCommunitySongs(filtered);
+    });
+    
+    // 검색창 스타일 (포커스 효과)
+    searchInput.addEventListener('focus', () => {
+        searchInput.style.borderColor = 'rgba(255, 100, 200, 0.8)';
+        searchInput.style.boxShadow = '0 0 20px rgba(255, 100, 200, 0.3)';
+    });
+    searchInput.addEventListener('blur', () => {
+        searchInput.style.borderColor = 'rgba(255, 100, 200, 0.3)';
+        searchInput.style.boxShadow = 'none';
+    });
     
     // 탭 클릭 이벤트
     officialTab.addEventListener('click', loadOfficialSongs);
@@ -3145,27 +3670,55 @@ queueLoopOption.addEventListener('click', (e) => {
 queueLoopCheckbox.addEventListener('change', (e) => {
     isQueueLooping = e.target.checked;
 });
-function loadAvailableSongs() {
+
+async function loadAvailableSongs() {
     availableSongsList.innerHTML = '';
-    const allSongs = document.querySelectorAll('.playlist-item');
     
-    // 노래 데이터를 배열로 수집
+    const showOfficial = queueShowOfficialCheck.checked;
+    const showCommunity = queueShowCommunityCheck.checked;
+    const searchTerm = queueSearchInput.value.toLowerCase();
+    
     const songsArray = [];
-    allSongs.forEach((item) => {
-        songsArray.push({
-            src: item.getAttribute('data-src'),
-            icon: item.getAttribute('data-icon'),
-            title: item.textContent
+    
+    // 공식 노래 추가
+    if (showOfficial) {
+        const allSongs = document.querySelectorAll('.playlist-item');
+        allSongs.forEach((item) => {
+            songsArray.push({
+                src: item.getAttribute('data-src'),
+                icon: item.getAttribute('data-icon'),
+                title: item.textContent,
+                type: 'official'
+            });
         });
-    });
+    }
+    
+    // 커뮤니티 노래 추가
+    if (showCommunity) {
+        const communitySongs = await loadCommunitySongs();
+        communitySongs.forEach(song => {
+            songsArray.push({
+                src: song.src,
+                icon: song.icon,
+                title: '👥 ' + song.title,
+                type: 'community'
+            });
+        });
+    }
 
     // 제목 기준 알파벳순 정렬
     songsArray.sort((a, b) => a.title.localeCompare(b.title));
 
+    // 검색 필터 적용
+    const filteredSongs = searchTerm 
+        ? songsArray.filter(song => song.title.toLowerCase().includes(searchTerm))
+        : songsArray;
+
     // 정렬된 순서로 표시
-    songsArray.forEach((songData) => {
+    filteredSongs.forEach((songData) => {
         const option = document.createElement('div');
         option.className = 'song-option';
+        option.setAttribute('data-type', songData.type);
         option.innerHTML = `
             <span>${songData.title}</span>
             <span>➕</span>
@@ -3182,31 +3735,35 @@ function loadAvailableSongs() {
         availableSongsList.appendChild(option);
     });
 
-    // _RANDOM_ 항목을 맨 마지막에 추가
-    const randomOption = document.createElement('div');
-    randomOption.className = 'song-option';
-    randomOption.style.background = 'linear-gradient(135deg, rgba(255, 100, 200, 0.2), rgba(100, 200, 255, 0.2))';
-    randomOption.style.border = '2px solid rgba(255, 100, 200, 0.5)';
-    randomOption.innerHTML = `
-        <span style="font-weight: bold;">⇄ _RANDOM_</span>
-        <span>➕</span>
-    `;
-    
-    randomOption.addEventListener('click', () => {
-        if (playQueue.length < MAX_QUEUE) {
-            playQueue.push({
-                src: '_RANDOM_',
-                icon: null,
-                title: '⇄ _RANDOM_',
-                isRandom: true,
-                songsArray: songsArray
-            });
-            updateSelectedQueue();
-            updateAvailableSongs();
-        }
-    });
-    
-    availableSongsList.appendChild(randomOption);
+    // _RANDOM_ 항목은 오직 공식만 체크되었을 때만 표시
+    if (showOfficial && !showCommunity) {
+        const randomOption = document.createElement('div');
+        randomOption.className = 'song-option';
+        randomOption.style.background = 'linear-gradient(135deg, rgba(255, 100, 200, 0.2), rgba(100, 200, 255, 0.2))';
+        randomOption.style.border = '2px solid rgba(255, 100, 200, 0.5)';
+        randomOption.innerHTML = `
+            <span style="font-weight: bold;">⇄ _RANDOM_</span>
+            <span>➕</span>
+        `;
+        
+        randomOption.addEventListener('click', () => {
+            if (playQueue.length < MAX_QUEUE) {
+                // 공식 노래만 포함
+                const officialSongs = songsArray.filter(s => s.type === 'official');
+                playQueue.push({
+                    src: '_RANDOM_',
+                    icon: null,
+                    title: '⇄ _RANDOM_',
+                    isRandom: true,
+                    songsArray: officialSongs
+                });
+                updateSelectedQueue();
+                updateAvailableSongs();
+            }
+        });
+        
+        availableSongsList.appendChild(randomOption);
+    }
     
     updateAvailableSongs();
 }
