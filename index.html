@@ -2418,6 +2418,205 @@ body.speed-super-spedup::before {
     }
 }
 
+/* ===== 재생목록 만들기 모달 모바일 최적화 ===== */
+@media (max-width: 768px) {
+    #queueModal {
+        padding: 10px;
+        align-items: flex-start;
+        overflow-y: auto;
+    }
+    
+    #queueModalContent {
+        width: 100%;
+        max-width: 100%;
+        max-height: none;
+        min-height: calc(100vh - 20px);
+        padding: 15px 10px;
+        margin: 0;
+        border-radius: 15px;
+    }
+    
+    #queueModalContent h2 {
+        font-size: 1.4em;
+        margin-bottom: 15px;
+        text-align: center;
+        padding: 0 10px;
+    }
+    
+    /* 필터 체크박스 영역 */
+    #queueModalContent > div[style*="display: flex"][style*="gap: 15px"] {
+        flex-direction: column;
+        gap: 10px !important;
+        padding: 12px !important;
+        margin-bottom: 12px !important;
+    }
+    
+    #queueModalContent label {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 8px;
+        touch-action: manipulation;
+    }
+    
+    #queueModalContent label input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+    }
+    
+    #queueModalContent label span {
+        font-size: 1.05em;
+    }
+    
+    /* 검색창 */
+    #queueSearchContainer {
+        margin-bottom: 12px !important;
+        padding: 0 !important;
+    }
+    
+    #queueSearchInput {
+        padding: 14px 16px !important;
+        font-size: 1em !important;
+        border-radius: 10px !important;
+    }
+    
+    /* 메인 섹션 - 세로 배치 */
+    .queue-section {
+        flex-direction: column;
+        gap: 15px;
+        min-height: 0;
+    }
+    
+    .available-songs,
+    .selected-queue {
+        flex: none;
+        min-height: 200px;
+        max-height: 35vh;
+        padding: 12px;
+        border-radius: 10px;
+    }
+    
+    .available-songs h3,
+    .selected-queue h3 {
+        font-size: 1.05em;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    /* 스크롤 리스트 */
+    #availableSongsList,
+    #selectedQueueList {
+        max-height: calc(35vh - 60px);
+        overflow-y: auto;
+        padding-right: 5px;
+    }
+    
+    /* 노래 옵션 */
+    .song-option {
+        padding: 14px 12px;
+        margin: 8px 0;
+        font-size: 0.95em;
+        border-radius: 8px;
+        touch-action: manipulation;
+    }
+    
+    .song-option:active {
+        transform: scale(0.98);
+        background: rgba(100, 200, 100, 0.4);
+    }
+    
+    /* 큐 아이템 */
+    .queue-item {
+        padding: 12px 10px;
+        margin: 8px 0;
+        font-size: 0.95em;
+        border-radius: 8px;
+        touch-action: manipulation;
+    }
+    
+    .queue-number {
+        min-width: 32px;
+        padding: 6px 10px;
+        font-size: 0.95em;
+    }
+    
+    .remove-queue-btn {
+        padding: 8px 12px;
+        font-size: 0.9em;
+        min-width: 50px;
+        border-radius: 6px;
+        touch-action: manipulation;
+    }
+    
+    .remove-queue-btn:active {
+        transform: scale(0.95);
+    }
+    
+    /* 반복 옵션 */
+    .queue-loop-option {
+        padding: 14px 12px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        touch-action: manipulation;
+    }
+    
+    .queue-loop-option:active {
+        transform: scale(0.99);
+    }
+    
+    .queue-loop-option input[type="checkbox"] {
+        width: 22px;
+        height: 22px;
+    }
+    
+    .queue-loop-label {
+        font-size: 1.05em;
+    }
+    
+    .queue-loop-icon {
+        font-size: 1.6em;
+    }
+    
+    /* 버튼 영역 */
+    .queue-buttons {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .queue-buttons button {
+        width: 100%;
+        padding: 16px 20px;
+        font-size: 1.05em;
+        border-radius: 10px;
+        touch-action: manipulation;
+        font-weight: bold;
+    }
+    
+    .queue-buttons button:active {
+        transform: scale(0.98);
+    }
+    
+    #startQueueBtn {
+        min-height: 55px;
+    }
+    
+    /* 스크롤바 스타일 */
+    #availableSongsList::-webkit-scrollbar,
+    #selectedQueueList::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    #availableSongsList::-webkit-scrollbar-thumb,
+    #selectedQueueList::-webkit-scrollbar-thumb {
+        background: rgba(100, 200, 255, 0.6);
+        border-radius: 3px;
+    }
+}
+
 
 
     </style>
