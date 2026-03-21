@@ -3037,34 +3037,47 @@ queueSearchInput.addEventListener('input', loadAvailableSongs);
 // 커뮤니티 노래 목록 가져오기
 async function loadCommunitySongs() {
     try {
+        const songs = [];
+
+        // 1. 기존 MP3 방식
         const url = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/community`;
         const response = await fetch(url);
         
-        if (!response.ok) {
-            // community 폴더가 없으면 빈 배열 반환
-            return [];
+        if (response.ok) {
+            const files = await response.json();
+            const mp3Files = files.filter(file => file.name.endsWith('.mp3'));
+            mp3Files.forEach(file => {
+                const title = file.name.replace('.mp3', '');
+                const iconName = title + '.jpg';
+                const hasIcon = files.some(f => f.name === iconName);
+                songs.push({
+                    title: title,
+                    src: `https://raw.githubusercontent.com/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/community/${file.name}`,
+                    icon: hasIcon ? `https://raw.githubusercontent.com/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/community/${iconName}` : null,
+                    isYoutube: false
+                });
+            });
         }
-        
-        const files = await response.json();
-        
-        // MP3 파일만 필터링
-        const mp3Files = files.filter(file => file.name.endsWith('.mp3'));
-        
-        // 노래 정보 구성
-        const songs = mp3Files.map(file => {
-            const title = file.name.replace('.mp3', '');
-            const iconName = title + '.jpg';
-            
-            // 파일이 있는지 확인
-            const hasIcon = files.some(f => f.name === iconName);
-            
-            return {
-                title: title,
-                src: `https://raw.githubusercontent.com/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/community/${file.name}`,
-                icon: hasIcon ? `https://raw.githubusercontent.com/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/community/${iconName}` : null
-            };
-        });
-        
+
+        // 2. 유튜브 링크 방식 (songs.json)
+        const jsonRes = await fetch(
+            `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/community/songs.json`
+        );
+        if (jsonRes.ok) {
+            const jsonData = await jsonRes.json();
+            const youtubeSongs = JSON.parse(atob(jsonData.content.replace(/\n/g, '')));
+            youtubeSongs.forEach(song => {
+                songs.push({
+                    title: song.title,
+                    src: song.youtubeUrl,
+                    icon: song.icon
+                        ? `https://raw.githubusercontent.com/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/community/${song.title}.jpg`
+                        : null,
+                    isYoutube: true
+                });
+            });
+        }
+
         return songs;
     } catch (error) {
         console.error('커뮤니티 노래 로드 실패:', error);
