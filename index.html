@@ -3039,10 +3039,9 @@ async function loadCommunitySongs() {
     try {
         const songs = [];
 
-        // 1. 기존 MP3 방식
         const url = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/community`;
         const response = await fetch(url);
-        
+
         if (response.ok) {
             const files = await response.json();
             const mp3Files = files.filter(file => file.name.endsWith('.mp3'));
@@ -3051,7 +3050,7 @@ async function loadCommunitySongs() {
                 const iconName = title + '.jpg';
                 const hasIcon = files.some(f => f.name === iconName);
                 songs.push({
-                    title: title,
+                    title,
                     src: `https://raw.githubusercontent.com/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/community/${file.name}`,
                     icon: hasIcon ? `https://raw.githubusercontent.com/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/community/${iconName}` : null,
                     isYoutube: false
@@ -3059,7 +3058,7 @@ async function loadCommunitySongs() {
             });
         }
 
-        // 2. 유튜브 링크 방식 (songs.json)
+        // songs.json에서 유튜브 곡 로드
         const jsonRes = await fetch(
             `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/community/songs.json`
         );
@@ -3070,9 +3069,7 @@ async function loadCommunitySongs() {
                 songs.push({
                     title: song.title,
                     src: song.youtubeUrl,
-                    icon: song.icon
-                        ? `https://raw.githubusercontent.com/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/community/${song.title}.jpg`
-                        : null,
+                    icon: `https://raw.githubusercontent.com/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/community/${song.title}.jpg`,
                     isYoutube: true
                 });
             });
@@ -3084,6 +3081,17 @@ async function loadCommunitySongs() {
         return [];
     }
 }
+
+async function getYoutubeStreamUrl(youtubeUrl) {
+    const res = await fetch('https://unvulmus-community.vercel.app/api/stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ youtubeUrl })
+    });
+    const data = await res.json();
+    if (!data.streamUrl) throw new Error('스트림 URL 가져오기 실패');
+    return data.streamUrl;
+}        
 
 // 앨범 아트 더블클릭으로 시각화 모드 전환
 albumArt.addEventListener('click', () => {
@@ -3231,32 +3239,42 @@ async function loadAllSongsGridWithCommunity() {
                 <div class="album-card-title">👥 ${song.title}</div>
                 <button class="album-card-play" style="background: linear-gradient(135deg, #ff64c8, #764ba2);">▶ 재생</button>
             `;
-            card.addEventListener('click', () => {
-                currentSong = song;
-                audio.src = song.src;
-                audio.playbackRate = currentSpeed;
-                audio.preservesPitch = (currentSpeed === 1.0);
-                songInfo.textContent = '👥 ' + song.title;
-                
-                if (song.icon) {
-                    albumArt.src = song.icon;
-                    albumArt.classList.add('show');
-                    albumBg.src = song.icon;
-                    albumBg.classList.add('show');
-                }
-                
-                setupAudio();
-                audio.play();
-                isPlaying = true;
-                visualize();
-                playBtn.style.display = 'none';
-                pauseBtn.style.display = 'inline-block';
-                
-                allSongsModal.style.display = 'none';
-            });
-            songsContent.appendChild(card);
-        });
+            card.addEventListener('click', async () => {
+    try {
+        if (song.isYoutube) {
+            songInfo.textContent = '⏳ 로딩 중...';
+            const streamUrl = await getYoutubeStreamUrl(song.src);
+            currentSong = { ...song, src: streamUrl };
+            audio.src = streamUrl;
+        } else {
+            currentSong = song;
+            audio.src = song.src;
+        }
+
+        audio.playbackRate = currentSpeed;
+        audio.preservesPitch = (currentSpeed === 1.0);
+        songInfo.textContent = '👥 ' + song.title;
+        
+        if (song.icon) {
+            albumArt.src = song.icon;
+            albumArt.classList.add('show');
+            albumBg.src = song.icon;
+            albumBg.classList.add('show');
+        }
+        
+        setupAudio();
+        audio.play();
+        isPlaying = true;
+        visualize();
+        playBtn.style.display = 'none';
+        pauseBtn.style.display = 'inline-block';
+        allSongsModal.style.display = 'none';
+
+    } catch (err) {
+        songInfo.textContent = '❌ 로드 실패: ' + err.message;
     }
+});
+songsContent.appendChild(card);
     
     // 커뮤니티 노래 로드
     async function loadCommunityView() {
