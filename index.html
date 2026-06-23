@@ -234,7 +234,7 @@
     object-fit: cover;
     opacity: 0;
     transition: opacity 0.5s;
-    filter: blur(40px) brightness(0.4);
+    filter: blur(40px) brightness(1);
     z-index: 0;
 }
 #loopBtn.active {
@@ -2649,6 +2649,89 @@ body.speed-super-spedup::before {
 }
 
 
+/* ===== 애니메이션 OST / 동영상 배경 / CD 애니메이션 ===== */
+
+/* 동영상 배경 */
+#album-bg-video {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.8s;
+    filter: brightness(1);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* 동영상 모드일 때 기존 이미지 배경 숨김 */
+body.video-mode #album-bg {
+    opacity: 0 !important;
+}
+
+/* CD 슬라이드 준비 (position: absolute를 left로 제어 가능하게) */
+#album-art {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* CD 타이틀 오버레이 */
+#cdSongTitle {
+    position: absolute;
+    top: 50%;
+    left: 250px;
+    transform: translateY(-50%) translateX(-10px);
+    opacity: 0;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    color: white;
+    font-size: 1.3em;
+    font-weight: bold;
+    text-shadow: 0 0 20px rgba(255,150,50,0.8), 0 2px 10px rgba(0,0,0,0.9);
+    pointer-events: none;
+    z-index: 20;
+    max-width: 55%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: rgba(0,0,0,0.45);
+    padding: 8px 18px;
+    border-radius: 30px;
+    border: 1px solid rgba(255,150,50,0.4);
+}
+
+/* 전환 버튼 */
+#switchModeBtn:hover {
+    opacity: 0.85;
+    transform: scale(1.05);
+}
+
+/* 애니메이션 playlist 아이템 */
+.anime-item {
+    border-color: rgba(255,150,50,0.5) !important;
+    background: rgba(255,150,50,0.08) !important;
+}
+
+.anime-item:hover {
+    background: rgba(255,150,50,0.2) !important;
+    border-color: rgba(255,150,50,0.8) !important;
+}
+
+.anime-item.active {
+    background: rgba(255,150,50,0.25) !important;
+    border-color: rgba(255,150,50,0.9) !important;
+}
+
+@media (max-width: 768px) {
+    #cdSongTitle {
+        left: 160px;
+        font-size: 1em;
+        max-width: 50%;
+        padding: 6px 12px;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -2665,7 +2748,7 @@ body.speed-super-spedup::before {
 <button id="speedControlBtn">⚙ 노래 조정</button>
     
     <div id="playlist">
-
+            <button id="switchModeBtn" style="padding:8px 15px;background:linear-gradient(135deg,rgba(255,150,50,0.35),rgba(255,80,200,0.35));border:2px solid rgba(255,150,50,0.6);color:white;border-radius:20px;cursor:pointer;font-size:0.9em;white-space:nowrap;flex-shrink:0;transition:all 0.3s;">💿 전환</button>
             <button id="viewAllSongsBtn">전체 보기</button>
         <!-- 
         === 노래 추가 방법 ===
@@ -2730,9 +2813,9 @@ body.speed-super-spedup::before {
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; gap: 10px; flex-wrap: wrap;">
             <h2 style="color: white; font-size: 2em; text-shadow: 0 0 20px rgba(100, 200, 255, 0.5); margin: 0;">📀_LIST_📀</h2>
             <div style="display: flex; gap: 10px;">
-                <a href="https://unvulmus-community.vercel.app/" target="_blank" id="addCommunityBtn" style="background: linear-gradient(135deg, #ff64c8, #764ba2); border: 2px solid rgba(255, 100, 200, 0.5); color: white; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-size: 1.1em; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: all 0.3s; font-weight: bold;">
-                    + 커뮤니티 노래 추가
-                </a>
+                <div style="background: rgba(255,80,80,0.18); border: 2px solid rgba(255,80,80,0.4); color: rgba(255,255,255,0.7); padding: 10px 20px; border-radius: 10px; font-size: 0.95em; display: flex; align-items: center; gap: 8px;">
+                    🚫 커뮤니티 기능 수정 중
+                </div>
                 <button id="closeAllSongsBtn" style="background: rgba(255, 100, 100, 0.3); border: 2px solid rgba(255, 100, 100, 0.5); color: white; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-size: 1.1em;">✕ 닫기</button>
             </div>
         </div>
@@ -2758,14 +2841,8 @@ body.speed-super-spedup::before {
             <button id="nextBtn">⏭ +10초</button>
               <button id="loopBtn">↺ 반복</button> 
         </div>
- <button id="volumeToggleBtn">🔊</button>
-<!-----<button id="skullEffectBtn">?</button>
-    -->
-<div id="volumeControl">
-    <span id="volumeIcon">🔊</span>
-<input type="range" id="volumeSlider" min="0" max="200" value="100">
-    <span id="volumeValue">100</span>
-</div>
+<button id="effectToggleBtn" style="position:fixed;bottom:20px;right:20px;z-index:100;padding:10px;background:rgba(30,30,30,0.9);border:2px solid rgba(255,255,255,0.2);color:white;border-radius:50%;cursor:pointer;font-size:1.5em;width:50px;height:50px;display:flex;align-items:center;justify-content:center;">🌈</button>
+
         <div id="progress-container">
             <div id="progress-bar">
                 <div id="progress-fill"></div>
@@ -2783,19 +2860,23 @@ body.speed-super-spedup::before {
     <div id="queueModalContent">
         <h2>🎵 재생목록 만들기 (최대 8개)</h2>
         
-        <!-- 필터 체크박스 추가 -->
+        <!-- 필터 체크박스 - 커뮤니티 비활성화 -->
         <div style="display: flex; gap: 15px; align-items: center; justify-content: center; margin-bottom: 15px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 10px;">
             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                 <input type="checkbox" id="queueShowOfficialCheck" checked style="cursor: pointer; width: 18px; height: 18px; accent-color: #64c8ff;">
                 <span style="color: white; font-size: 1em;">🎵 공식 보이기</span>
             </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: not-allowed; opacity: 0.4;" title="커뮤니티 기능 수정 중">
+                <input type="checkbox" id="queueShowCommunityCheck" disabled style="cursor: not-allowed; width: 18px; height: 18px; accent-color: #ff64c8;">
+                <span style="color: white; font-size: 1em;">🚫 커뮤니티 (수정 중)</span>
+            </label>
             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                <input type="checkbox" id="queueShowCommunityCheck" style="cursor: pointer; width: 18px; height: 18px; accent-color: #ff64c8;">
-                <span style="color: white; font-size: 1em;">👥 커뮤니티 보이기</span>
+                <input type="checkbox" id="queueShowAnimeCheck" style="cursor: pointer; width: 18px; height: 18px; accent-color: #ff9650;">
+                <span style="color: white; font-size: 1em;">💿 애니메이션 OST</span>
             </label>
         </div>
         
-        <!-- 검색창 (커뮤니티 활성화시만 표시) -->
+        <!-- 검색창 (커뮤니티 비활성화) -->
         <div id="queueSearchContainer" style="display: none; margin-bottom: 15px;">
             <input type="text" id="queueSearchInput" placeholder="🔍 커뮤니티 노래 검색..." style="width: 100%; padding: 12px 18px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,100,200,0.3); border-radius: 10px; color: white; font-size: 1em;">
         </div>
@@ -2914,6 +2995,7 @@ let albumClickTimer = null;
 let queueContentVisible = true;
 const queueShowOfficialCheck = document.getElementById('queueShowOfficialCheck');
 const queueShowCommunityCheck = document.getElementById('queueShowCommunityCheck');
+const queueShowAnimeCheck = document.getElementById('queueShowAnimeCheck');
 const queueSearchContainer = document.getElementById('queueSearchContainer');
 const queueSearchInput = document.getElementById('queueSearchInput');
         const albumBg = document.getElementById('album-bg');
@@ -2934,7 +3016,7 @@ const queueSearchInput = document.getElementById('queueSearchInput');
         const createQueueBtn = document.getElementById('createQueueBtn');
         const speedControlBtn = document.getElementById('speedControlBtn');
         let gainNode = null;
-let currentVolume = 1.0;
+
 const speedModal = document.getElementById('speedModal');
 const closeSpeedBtn = document.getElementById('closeSpeedBtn');
 const queueModal = document.getElementById('queueModal');
@@ -2948,17 +3030,12 @@ const progressContainer = document.getElementById('progress-container');
 const slowedBtn = document.getElementById('slowedBtn');
 const normalSpeedBtn = document.getElementById('normalSpeedBtn');
 const spedUpBtn = document.getElementById('spedUpBtn');
-const volumeToggleBtn = document.getElementById('volumeToggleBtn');
-const volumeControl = document.getElementById('volumeControl');
-const volumeSlider = document.getElementById('volumeSlider');
-const volumeValue = document.getElementById('volumeValue');
-const volumeIcon = document.getElementById('volumeIcon');
+
 const currentQueueDiv = document.getElementById('currentQueue');
 const currentQueueList = document.getElementById('currentQueueList');
 const cancelQueueBtn = document.getElementById('cancelQueueBtn');
 const queueCounter = document.getElementById('queueCounter');
-let isMuted = false;
-let previousVolume = 100;
+
 let currentSpeed = 1.0;
 let isQueueLooping = false;
 const queueLoopCheckbox = document.getElementById('queueLoopCheckbox');
@@ -3030,6 +3107,7 @@ queueShowCommunityCheck.addEventListener('change', () => {
         queueSearchInput.value = '';
     }
 });
+queueShowAnimeCheck.addEventListener('change', loadAvailableSongs);
 
 // 검색 기능
 queueSearchInput.addEventListener('input', loadAvailableSongs);
@@ -3081,6 +3159,8 @@ async function loadCommunitySongs() {
         return [];
     }
 }
+
+
 
 async function getYoutubeStreamUrl(youtubeUrl) {
     const res = await fetch('https://unvulmus-community.vercel.app/api/stream', {
@@ -3137,8 +3217,11 @@ async function loadAllSongsGridWithCommunity() {
             <button id="officialTab" class="modal-tab active" style="flex: 1; min-width: 150px; padding: 15px; background: rgba(102, 126, 234, 0.3); border: 2px solid rgba(102, 126, 234, 0.8); color: white; border-radius: 10px; cursor: pointer; font-size: 1.1em; font-weight: bold;">
                 🎵 공식 노래
             </button>
-            <button id="communityTab" class="modal-tab" style="flex: 1; min-width: 150px; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.2); color: rgba(255,255,255,0.6); border-radius: 10px; cursor: pointer; font-size: 1.1em; font-weight: bold;">
-                👥 커뮤니티
+            <button id="animeTab" class="modal-tab" style="flex: 1; min-width: 150px; padding: 15px; background: rgba(255, 150, 50, 0.05); border: 2px solid rgba(255, 150, 50, 0.3); color: rgba(255,200,100,0.7); border-radius: 10px; cursor: pointer; font-size: 1.1em; font-weight: bold;">
+                💿 애니메이션 OST
+            </button>
+            <button id="communityTab" class="modal-tab" disabled style="flex: 1; min-width: 150px; padding: 15px; background: rgba(255, 255, 255, 0.03); border: 2px solid rgba(255, 80, 80, 0.3); color: rgba(255,255,255,0.3); border-radius: 10px; cursor: not-allowed; font-size: 1.1em; font-weight: bold;" title="커뮤니티 기능 수정 중">
+                🚫 커뮤니티 (수정 중)
             </button>
         </div>
         <div id="communitySearchContainer" style="grid-column: 1/-1; margin-bottom: 20px; display: none;">
@@ -3168,7 +3251,8 @@ async function loadAllSongsGridWithCommunity() {
         searchContainer.style.display = 'none';
         
         songsContent.innerHTML = '';
-        const allSongs = document.querySelectorAll('.playlist-item');
+        // 애니메이션 아이템 제외하고 공식 노래만 선택
+        const allSongs = document.querySelectorAll('.playlist-item:not(.anime-item)');
         
         // 노래 데이터 수집 및 정렬
         const songsArray = [];
@@ -3215,126 +3299,420 @@ async function loadAllSongsGridWithCommunity() {
         });
     }
     
-    // 커뮤니티 노래 표시 (필터링 적용)
-    function displayCommunitySongs(songs) {
+    // ===== 애니메이션 OST 탭 로직 =====
+    const animeTab = document.getElementById('animeTab');
+    const _communityTab = document.getElementById('communityTab');
+
+    function setTabActive(activeTab) {
+        [officialTab, animeTab, _communityTab].forEach(t => {
+            if (!t) return;
+            t.style.background = 'rgba(255,255,255,0.05)';
+            t.style.borderColor = 'rgba(255,255,255,0.2)';
+            t.style.color = 'rgba(255,255,255,0.6)';
+        });
+        if (activeTab === 'official') {
+            officialTab.style.background = 'rgba(102,126,234,0.3)';
+            officialTab.style.borderColor = 'rgba(102,126,234,0.8)';
+            officialTab.style.color = 'white';
+        } else if (activeTab === 'anime') {
+            animeTab.style.background = 'rgba(255,150,50,0.3)';
+            animeTab.style.borderColor = 'rgba(255,150,50,0.8)';
+            animeTab.style.color = 'white';
+        }
+    }
+
+    
+
+    // 애니메이션 OST 노래 목록 표시
+    function loadAnimeView() {
+        setTabActive('anime');
+        searchContainer.style.display = 'none';
         songsContent.innerHTML = '';
-        
-        if (songs.length === 0) {
+
+        const animeSongs = getAnimeSongs();
+
+        if (animeSongs.length === 0) {
             songsContent.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: rgba(255,255,255,0.6);">
-                    <div style="font-size: 4em; margin-bottom: 20px;">🔍</div>
-                    <h3 style="margin-bottom: 10px;">검색 결과가 없습니다</h3>
-                    <p>다른 검색어를 입력해보세요</p>
+                <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.6);">
+                    <div style="font-size: 4em; margin-bottom: 20px;">💿</div>
+                    <h3 style="margin-bottom: 10px;">애니메이션 OST 준비 중</h3>
+                    <p>playlist-item에 data-video 속성으로 mp4 파일을 추가하세요</p>
                 </div>
             `;
             return;
         }
-        
-        songs.forEach(song => {
+
+        // 랜덤 카드
+        const randomCard = document.createElement('div');
+        randomCard.className = 'album-card';
+        randomCard.style.background = 'linear-gradient(135deg, rgba(255,150,50,0.3), rgba(255,80,200,0.3))';
+        randomCard.innerHTML = `
+            <div class="album-card-icon" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ff9632,#ff50c8);font-size:4em;border:3px solid rgba(255,255,255,0.8);">⇄</div>
+            <div class="album-card-title" style="font-size:1.2em;color:#fff;">랜덤 OST</div>
+            <button class="album-card-play" style="background:linear-gradient(135deg,#ff9632,#ff50c8);">⇄ 랜덤 재생</button>
+        `;
+        randomCard.addEventListener('click', () => {
+            allSongsModal.style.display = 'none';
+            showRandomAnimation(animeSongs.map(s => ({ title: s.title, element: null, _anime: s })));
+        });
+        songsContent.appendChild(randomCard);
+
+        animeSongs.forEach(song => {
             const card = document.createElement('div');
             card.className = 'album-card';
-            card.style.border = '2px solid rgba(255, 100, 200, 0.5)';
+            card.style.border = '2px solid rgba(255,150,50,0.5)';
+            const iconSrc = song.icon || 'default-album.png';
             card.innerHTML = `
-                <img src="${song.icon}" class="album-card-icon" alt="${song.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%23ff64c8%22/%3E%3Ctext x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2220%22%3E👥%3C/text%3E%3C/svg%3E'">
-                <div class="album-card-title">👥 ${song.title}</div>
-                <button class="album-card-play" style="background: linear-gradient(135deg, #ff64c8, #764ba2);">▶ 재생</button>
+                <img src="${iconSrc}" class="album-card-icon" alt="${song.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%23ff9632%22/%3E%3Ctext x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2218%22%3E💿%3C/text%3E%3C/svg%3E'">
+                <div class="album-card-title">💿 ${song.title}</div>
+                <button class="album-card-play" style="background:linear-gradient(135deg,rgba(255,150,50,0.4),rgba(255,80,200,0.4));">▶ 재생</button>
             `;
-            card.addEventListener('click', async () => {
-    try {
-        if (song.isYoutube) {
-            songInfo.textContent = '⏳ 로딩 중...';
-            const streamUrl = await getYoutubeStreamUrl(song.src);
-            currentSong = { ...song, src: streamUrl };
-            audio.src = streamUrl;
-        } else {
-            currentSong = song;
-            audio.src = song.src;
-        }
-
-        audio.playbackRate = currentSpeed;
-        audio.preservesPitch = (currentSpeed === 1.0);
-        songInfo.textContent = '👥 ' + song.title;
-        
-        if (song.icon) {
-            albumArt.src = song.icon;
-            albumArt.classList.add('show');
-            albumBg.src = song.icon;
-            albumBg.classList.add('show');
-        }
-        
-        setupAudio();
-        audio.play();
-        isPlaying = true;
-        visualize();
-        playBtn.style.display = 'none';
-        pauseBtn.style.display = 'inline-block';
-        allSongsModal.style.display = 'none';
-
-    } catch (err) {
-        songInfo.textContent = '❌ 로드 실패: ' + err.message;
+            card.addEventListener('click', () => {
+                loadAnimeSong(song);
+                allSongsModal.style.display = 'none';
+            });
+            songsContent.appendChild(card);
+        });
     }
-});
-songsContent.appendChild(card);
-    });  
-}
-    // 커뮤니티 노래 로드
-    async function loadCommunityView() {
-        officialTab.style.background = 'rgba(255, 255, 255, 0.05)';
-        officialTab.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-        officialTab.style.color = 'rgba(255,255,255,0.6)';
-        communityTab.style.background = 'rgba(255, 100, 200, 0.3)';
-        communityTab.style.borderColor = 'rgba(255, 100, 200, 0.8)';
-        communityTab.style.color = 'white';
-        searchContainer.style.display = 'block';
-        
-        songsContent.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: white;">커뮤니티 노래 로딩 중... ⏳</div>';
-        
-        const communitySongs = await loadCommunitySongs();
-        allCommunitySongs = communitySongs;
-        
-        if (communitySongs.length === 0) {
-            songsContent.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: rgba(255,255,255,0.6);">
-                    <div style="font-size: 4em; margin-bottom: 20px;">😢</div>
-                    <h3 style="margin-bottom: 10px;">아직 커뮤니티 노래가 없습니다</h3>
-                    <p>첫 번째 커뮤니티 노래를 추가해보세요!</p>
-                </div>
-            `;
-        } else {
-            displayCommunitySongs(communitySongs);
-        }
-    }
-    
-    // 검색 기능
-    searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const filtered = allCommunitySongs.filter(song => 
-            song.title.toLowerCase().includes(searchTerm)
-        );
-        displayCommunitySongs(filtered);
-    });
-    
-    // 검색창 스타일 (포커스 효과)
-    searchInput.addEventListener('focus', () => {
-        searchInput.style.borderColor = 'rgba(255, 100, 200, 0.8)';
-        searchInput.style.boxShadow = '0 0 20px rgba(255, 100, 200, 0.3)';
-    });
-    searchInput.addEventListener('blur', () => {
-        searchInput.style.borderColor = 'rgba(255, 100, 200, 0.3)';
-        searchInput.style.boxShadow = 'none';
-    });
-    
+
     // 탭 클릭 이벤트
-    officialTab.addEventListener('click', loadOfficialSongs);
-    communityTab.addEventListener('click', loadCommunityView);
+    officialTab.addEventListener('click', () => {
+        setTabActive('official');
+        loadOfficialSongs();
+    });
+    animeTab.addEventListener('click', loadAnimeView);
+    // communityTab은 disabled이므로 이벤트 없음
     
     // 처음엔 공식 노래 표시
+    setTabActive('official');
     loadOfficialSongs();
 }
 
 // 기존 loadAllSongsGrid 함수 대체
 const originalLoadAllSongsGrid = loadAllSongsGrid;
 loadAllSongsGrid = loadAllSongsGridWithCommunity;
+
+// =====================================================
+// 애니메이션 OST 데이터
+// data-src: mp3, data-icon: jpg/png, data-video: mp4 (선택)
+// 아래 배열에 추가하세요
+// =====================================================
+const ANIME_SONGS = [
+
+    // 예시:
+    { title: "히로아카- Peace Sign", src: "peace_sign.mp3", icon: "peace_sign.jpg", video: "peace_sign.mp4" },
+     { title: "주술회전- Where our blue is", src: "wbi.mp3", icon: "wbi.jpg", video: "wbi.mp4" },
+];
+
+
+function getAnimeSongs() {
+    // playlist-item 중 data-anime 속성이 있는 것도 포함
+    const extra = [];
+    document.querySelectorAll('.anime-item').forEach(el => {
+        extra.push({
+            title: el.textContent.trim(),
+            src: el.getAttribute('data-src'),
+            icon: el.getAttribute('data-icon') || null,
+            video: el.getAttribute('data-video') || null,
+            element: el
+        });
+    });
+    
+    // 중복 제거 (title 기준으로 이모지 제거 후 비교)
+    const allSongs = [...ANIME_SONGS, ...extra];
+    const seen = new Set();
+    const unique = [];
+    
+    allSongs.forEach(song => {
+        // 이모지 제거 후 제목 비교 (✨, 💿 등 제거)
+        const cleanTitle = song.title.replace(/^[✨💿]\s*/, '').trim();
+        if (!seen.has(cleanTitle)) {
+            seen.add(cleanTitle);
+            unique.push(song);
+        }
+    });
+    
+    return unique;
+}
+
+// =====================================================
+// 배경 동영상 요소 생성
+// =====================================================
+const albumBgVideo = document.createElement('video');
+albumBgVideo.id = 'album-bg-video';
+albumBgVideo.setAttribute('playsinline', '');
+albumBgVideo.setAttribute('loop', '');
+albumBgVideo.setAttribute('muted', '');
+albumBgVideo.style.cssText = `
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.8s;
+    filter: blur(0px) brightness(0.45);
+    z-index: 0;
+    pointer-events: none;
+`;
+document.getElementById('container').insertBefore(albumBgVideo, document.getElementById('canvas'));
+
+let isVideoMode = false;   // 현재 동영상 모드 여부
+let cdHideTimer = null;    // CD 사라짐 타이머
+
+// =====================================================
+// CD 숨김 애니메이션 (동영상 모드에서만)
+// 재생 시작 → 5초째: CD가 왼쪽으로 슬라이드 + 제목 표시
+//             → CD가 오른쪽으로 귀환 → 제목 사라짐
+//             → 2초 후: CD 자체 hide
+// =====================================================
+function startCdHideSequence() {
+    if (cdHideTimer) clearTimeout(cdHideTimer);
+
+    // CD를 왼쪽으로 이동 (5초째)
+    albumArt.style.transition = 'left 0.8s ease, transform 0.8s ease';
+    albumArt.style.left = '30px';
+    albumArt.style.transform = 'translateY(-50%)';
+
+    // 제목 표시 (CD 옆)
+    const cdTitle = document.getElementById('cdSongTitle');
+    if (cdTitle) {
+        cdTitle.textContent = currentSong ? currentSong.title : '';
+        cdTitle.style.opacity = '1';
+        cdTitle.style.transform = 'translateY(-50%) translateX(0)';
+    }
+
+    // 1.5초 후 CD를 오른쪽으로 다시 이동 → 제목 사라짐 (그대로 유지)
+    cdHideTimer = setTimeout(() => {
+        albumArt.style.left = '110%';
+        albumArt.style.transform = 'translateY(-50%)';
+
+        if (cdTitle) {
+            cdTitle.style.opacity = '0';
+            cdTitle.style.transform = 'translateY(-50%) translateX(-20px)';
+        }
+        // CD는 나간 채로 유지 - 돌아오지 않음
+    }, 1500);
+}
+
+// CD 제목 오버레이 엘리먼트 생성
+const cdTitleEl = document.createElement('div');
+cdTitleEl.id = 'cdSongTitle';
+cdTitleEl.style.cssText = `
+    position: absolute;
+    top: 50%;
+    left: 250px;
+    transform: translateY(-50%) translateX(-10px);
+    opacity: 0;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    color: white;
+    font-size: 1.4em;
+    font-weight: bold;
+    text-shadow: 0 0 20px rgba(255,150,50,0.8), 0 2px 10px rgba(0,0,0,0.9);
+    pointer-events: none;
+    z-index: 20;
+    max-width: 60%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: rgba(0,0,0,0.4);
+    padding: 8px 18px;
+    border-radius: 30px;
+    border: 1px solid rgba(255,150,50,0.4);
+`;
+document.getElementById('container').appendChild(cdTitleEl);
+
+// =====================================================
+// 애니메이션 OST 로드 함수
+// =====================================================
+function syncVideoTime(t) {
+    if (!isVideoMode || !albumBgVideo.duration || isNaN(albumBgVideo.duration)) return;
+    albumBgVideo.currentTime = t % albumBgVideo.duration; // 모듈로 필수
+}
+
+// 이 리스너는 스크립트에서 단 한 번만 등록됩니다 (loadAnimeSong 안에 넣지 않음)
+audio.addEventListener('seeked', () => syncVideoTime(audio.currentTime));
+
+function loadAnimeSong(song) {
+    audio.pause();          // 추가: 중복 재생 방지
+    audio.currentTime = 0;  // 추가: 중복 재생 방지
+
+    const src = song.src;
+    const icon = song.icon || null;
+    const title = song.title;
+    const videoSrc = song.video || null;
+
+    currentSong = { src, icon, title, video: videoSrc, isAnime: true };
+
+    // 오디오 설정
+    audio.src = src;
+    audio.playbackRate = currentSpeed;
+    audio.preservesPitch = (currentSpeed === 1.0);
+    updateSongTitle(title);
+
+    // 활성 표시
+    document.querySelectorAll('.playlist-item, .anime-item').forEach(el => el.classList.remove('active'));
+    if (song.element) song.element.classList.add('active');
+
+    if (videoSrc) {
+        // ===== 동영상 배경 모드 =====
+        isVideoMode = true;
+
+        // 기존 이미지 배경 숨김
+        albumBg.classList.remove('show');
+        albumBg.src = '';
+
+        // 동영상 배경 설정
+        albumBgVideo.src = videoSrc;
+        albumBgVideo.load();
+        albumBgVideo.style.opacity = '0';
+        albumBgVideo.play().catch(() => {});
+        setTimeout(() => { albumBgVideo.style.opacity = '0.85'; }, 100);
+
+        // CD 초기 상태 세팅
+        if (cdHideTimer) { clearTimeout(cdHideTimer); cdHideTimer = null; }
+        albumArt.style.transition = '';
+        albumArt.style.left = '50%';
+        albumArt.style.transform = 'translate(-50%, -50%)';
+        if (icon) {
+            albumArt.src = icon;
+            albumArt.classList.add('show');
+        } else {
+            albumArt.classList.remove('show');
+        }
+        cdTitleEl.style.opacity = '0';
+
+        // 동영상 재생 시작되면 바로 CD 슬라이드 시퀀스 시작
+        albumBgVideo.addEventListener('playing', function onFirstPlay() {
+            albumBgVideo.removeEventListener('playing', onFirstPlay);
+            if (isVideoMode) startCdHideSequence();
+        }, { once: true });
+
+    } else {
+        // ===== 일반 이미지 모드 (애니메이션이지만 mp4 없음) =====
+        isVideoMode = false;
+        albumBgVideo.style.opacity = '0';
+        setTimeout(() => { albumBgVideo.src = ''; }, 800);
+
+        if (icon) {
+            const img = new Image();
+            img.onload = () => {
+                albumArt.src = icon;
+                albumArt.classList.add('show');
+                albumBg.src = icon;
+                albumBg.classList.add('show');
+            };
+            img.onerror = () => {
+                albumArt.classList.remove('show');
+                albumBg.classList.remove('show');
+            };
+            img.src = icon;
+        } else {
+            albumArt.classList.remove('show');
+            albumBg.classList.remove('show');
+        }
+    }
+
+    if (animationId) cancelAnimationFrame(animationId);
+    setupAudio();
+    audio.play();
+    isPlaying = true;
+    // 애니메이션 노래 → 무지개 띠 이펙트
+    visualMode = 'rainbow-stripe';
+    visualize();
+    playBtn.style.display = 'none';
+    pauseBtn.style.display = 'inline-block';
+    requestWakeLock();
+}
+
+// 일반 노래 재생 시 비디오 정리
+const _origLoadSong = loadSong;
+function loadSong(item) {
+    // 비디오 모드 종료
+    if (isVideoMode) {
+        isVideoMode = false;
+        albumBgVideo.style.opacity = '0';
+        if (cdHideTimer) { clearTimeout(cdHideTimer); cdHideTimer = null; }
+        // CD 원위치
+        albumArt.style.transition = 'left 0.5s, transform 0.5s';
+        albumArt.style.left = '50%';
+        albumArt.style.transform = 'translate(-50%, -50%)';
+        albumArt.style.opacity = '1';
+        cdTitleEl.style.opacity = '0';
+        setTimeout(() => { albumBgVideo.src = ''; }, 800);
+    }
+    // 애니메이션/무지개 띠 → 무지개 원 복원 (rainbow-stripe/none이었을 경우만)
+    if (visualMode === 'rainbow-stripe' || visualMode === 'none') visualMode = 'circle';
+    _origLoadSong(item);
+}
+
+// =====================================================
+// 플레이리스트 "전환" 버튼 (펑크 ↔ 애니메이션 OST)
+// =====================================================
+let playlistMode = 'punk'; // 'punk' | 'anime'
+const switchModeBtn = document.getElementById('switchModeBtn');
+const punkItems = Array.from(document.querySelectorAll('.playlist-item'));
+
+// 애니메이션 아이템 동적 생성 (ANIME_SONGS + .anime-item 기반)
+function buildAnimePlaylistItems() {
+    const existing = document.querySelectorAll('.anime-item');
+    if (existing.length > 0) return; // 이미 HTML에 있으면 스킵
+
+    ANIME_SONGS.forEach(song => {
+        const el = document.createElement('div');
+        el.className = 'anime-item playlist-item';
+        el.setAttribute('data-src', song.src);
+        el.setAttribute('data-icon', song.icon || '');
+        el.setAttribute('data-video', song.video || '');
+        el.textContent = '✨ ' + song.title;
+        el.style.borderColor = 'rgba(255,150,50,0.5)';
+        el.addEventListener('click', () => {
+            loadAnimeSong(song);
+        });
+        playlistDiv.insertBefore(el, playlistScrollRight);
+    });
+}
+
+function showPunkPlaylist() {
+    playlistMode = 'punk';
+    switchModeBtn.textContent = '💿 전환';
+    switchModeBtn.style.background = 'linear-gradient(135deg,rgba(255,150,50,0.35),rgba(255,80,200,0.35))';
+    switchModeBtn.style.borderColor = 'rgba(255,150,50,0.6)';
+    punkItems.forEach(el => { el.style.display = ''; });
+    document.querySelectorAll('.anime-item').forEach(el => { el.style.display = 'none'; });
+}
+
+function showAnimePlaylist() {
+    playlistMode = 'anime';
+    switchModeBtn.textContent = '🎵 전환';
+    switchModeBtn.style.background = 'linear-gradient(135deg,rgba(102,126,234,0.35),rgba(0,240,255,0.25))';
+    switchModeBtn.style.borderColor = 'rgba(100,200,255,0.6)';
+
+    // 애니메이션 아이템이 없으면 ANIME_SONGS에서 빌드
+    buildAnimePlaylistItems();
+
+    punkItems.forEach(el => { el.style.display = 'none'; });
+    const animeEls = document.querySelectorAll('.anime-item');
+    if (animeEls.length === 0) {
+        // 등록된 OST 없음 안내
+        const notice = document.createElement('div');
+        notice.id = 'animeEmptyNotice';
+        notice.style.cssText = 'padding:8px 16px;color:rgba(255,200,100,0.8);font-size:0.85em;white-space:nowrap;flex-shrink:0;';
+        notice.textContent = '💿 ANIME_SONGS 배열에 OST를 추가하세요';
+        playlistDiv.insertBefore(notice, playlistScrollRight);
+    } else {
+        animeEls.forEach(el => { el.style.display = ''; });
+        const n = document.getElementById('animeEmptyNotice');
+        if (n) n.remove();
+    }
+}
+
+switchModeBtn.addEventListener('click', () => {
+    if (playlistMode === 'punk') {
+        showAnimePlaylist();
+    } else {
+        showPunkPlaylist();
+    }
+});
 
 // 탭 전환
 speedTab?.addEventListener('click', () => {
@@ -3439,30 +3817,34 @@ function showRandomAnimation(songsArray) {
                 songInfo.style.transition = 'all 0.3s';
                 
                 // element가 있으면 사용, 없으면 직접 로드
-                if (finalSong.element) {
-                    loadSong(finalSong.element);
-                } else {
-                    // 직접 노래 로드
-                    currentSong = finalSong;
-                    audio.src = finalSong.src;
-                    audio.playbackRate = currentSpeed;
-                    audio.preservesPitch = (currentSpeed === 1.0);
-                    songInfo.textContent = finalSong.title;
+            if (finalSong._anime) {
+    // 애니메이션 OST 랜덤
+    loadAnimeSong(finalSong._anime);
+} else if (finalSong.element) {
+    loadSong(finalSong.element);
+} else {
+    currentSong = finalSong;
+    audio.src = finalSong.src;
+    audio.playbackRate = currentSpeed;
+    audio.preservesPitch = (currentSpeed === 1.0);
+    songInfo.textContent = finalSong.title;
+    
+    if (finalSong.icon) {
+        albumArt.src = finalSong.icon;
+        albumArt.classList.add('show');
+        albumBg.src = finalSong.icon;
+        albumBg.classList.add('show');
+    }
+    
+    setupAudio();
+    audio.play();
+    isPlaying = true;
+    visualize();
+    playBtn.style.display = 'none';
+    pauseBtn.style.display = 'inline-block';
+}
                     
-                    if (finalSong.icon) {
-                        albumArt.src = finalSong.icon;
-                        albumArt.classList.add('show');
-                        albumBg.src = finalSong.icon;
-                        albumBg.classList.add('show');
-                    }
-                    
-                    setupAudio();
-                    audio.play();
-                    isPlaying = true;
-                    visualize();
-                    playBtn.style.display = 'none';
-                    pauseBtn.style.display = 'inline-block';
-                }
+          
             }, 1000);
         }
     }, 100);
@@ -3663,70 +4045,6 @@ cancelQueueBtn.addEventListener('click', () => {
         currentQueueIndex = 0;
     }
 });
-// 볼륨 컨트롤 토글
-volumeToggleBtn.addEventListener('click', () => {
-    volumeControl.classList.toggle('show');
-});
-
-// 볼륨 조절
-volumeSlider.addEventListener('input', (e) => {
-    const volume = e.target.value;
-    currentVolume = volume / 100; // 0.0 ~ 2.0
-    
-    // setupAudio가 아직 안됐으면 먼저 실행
-    if (!gainNode && audioContext) {
-        setupAudio();
-    }
-    
-    if (gainNode) {
-        gainNode.gain.value = currentVolume;
-    } else {
-        // gainNode가 없으면 일반 audio 볼륨 사용 (최대 1.0)
-        audio.volume = Math.min(currentVolume, 1.0);
-    }
-    
-    volumeValue.textContent = volume;
-    updateVolumeIcon(volume);
-});
-
-// 볼륨 아이콘 클릭으로 음소거/해제
-volumeIcon.addEventListener('click', () => {
-    if (isMuted) {
-        currentVolume = previousVolume / 100;
-        if (gainNode) {
-            gainNode.gain.value = currentVolume;
-        }
-        volumeSlider.value = previousVolume;
-        volumeValue.textContent = previousVolume;
-        isMuted = false;
-    } else {
-        previousVolume = volumeSlider.value;
-        currentVolume = 0;
-        if (gainNode) {
-            gainNode.gain.value = 0;
-        }
-        volumeSlider.value = 0;
-        volumeValue.textContent = 0;
-        isMuted = true;
-    }
-    updateVolumeIcon(volumeSlider.value);
-});
-
-function updateVolumeIcon(volume) {
-    if (volume == 0) {
-        volumeIcon.textContent = '🔇';
-        volumeToggleBtn.textContent = '🔇';
-    } else if (volume < 50) {
-        volumeIcon.textContent = '🔉';
-        volumeToggleBtn.textContent = '🔉';
-    } else if (volume < 150) {
-        volumeIcon.textContent = '🔊';
-        volumeToggleBtn.textContent = '🔊';
-    } else {
-        volumeIcon.textContent = '💥';  // 200% 근처에서 특별 표시
-        volumeToggleBtn.textContent = '💥';
-    }
-}
 
 // 페이지 가시성 변경 시 재요청
 document.addEventListener('visibilitychange', () => {
@@ -3743,11 +4061,49 @@ document.addEventListener('visibilitychange', () => {
         window.addEventListener('resize', resizeCanvas);
 
         // 재생목록 아이템 클릭 이벤트
-        document.querySelectorAll('.playlist-item').forEach(item => {
-            item.addEventListener('click', () => {
-                loadSong(item);
-            });
-        });
+     document.querySelectorAll('.playlist-item').forEach(item => {
+    item.addEventListener('click', () => {
+        // OST 동영상 모드 강제 종료
+        if (isVideoMode) {
+            isVideoMode = false;
+            albumBgVideo.pause();
+            albumBgVideo.src = '';
+            albumBgVideo.style.opacity = '0';
+            if (cdHideTimer) { clearTimeout(cdHideTimer); cdHideTimer = null; }
+            albumArt.style.transition = '';
+            albumArt.style.left = '50%';
+            albumArt.style.transform = 'translate(-50%, -50%)';
+            cdTitleEl.style.opacity = '0';
+        }
+        if (visualMode === 'rainbow-stripe') visualMode = 'circle';
+        
+        // 원래 loadSong 직접 실행 (덮어씌운 버전 우회)
+        const src = item.getAttribute('data-src');
+        const icon = item.getAttribute('data-icon');
+        const title = item.textContent;
+        currentSong = { src, icon, title };
+        audio.src = src;
+        audio.playbackRate = currentSpeed;
+        audio.preservesPitch = (currentSpeed === 1.0);
+        updateSongTitle(title);
+        document.querySelectorAll('.playlist-item').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+        if (icon) {
+            albumArt.src = icon; albumArt.classList.add('show');
+            albumBg.src = icon; albumBg.classList.add('show');
+        } else {
+            albumArt.classList.remove('show'); albumBg.classList.remove('show');
+        }
+        if (animationId) cancelAnimationFrame(animationId);
+        setupAudio();
+        audio.play();
+        isPlaying = true;
+        visualize();
+        playBtn.style.display = 'none';
+        pauseBtn.style.display = 'inline-block';
+        requestWakeLock();
+    });
+});
 
         function loadSong(item) {
             const src = item.getAttribute('data-src');
@@ -3871,6 +4227,7 @@ slowedBtn.addEventListener('click', () => {
     
     audio.playbackRate = currentSpeed;
     audio.preservesPitch = false;
+    if (isVideoMode) albumBgVideo.playbackRate = currentSpeed;
     updateSpeedButtons('slowed');
     updateSongTitle();
 });
@@ -3888,6 +4245,7 @@ normalSpeedBtn.addEventListener('click', () => {
     
     audio.playbackRate = 1.0;
     audio.preservesPitch = true;
+    if (isVideoMode) albumBgVideo.playbackRate = 1.0;
     updateSpeedButtons('normal');
     updateSongTitle();
 });
@@ -3921,6 +4279,7 @@ spedUpBtn.addEventListener('click', () => {
     
     audio.playbackRate = currentSpeed;
     audio.preservesPitch = false;
+    if (isVideoMode) albumBgVideo.playbackRate = currentSpeed;
     updateSpeedButtons('spedup');
     updateSongTitle();
 });
@@ -3959,6 +4318,7 @@ albumArt.addEventListener('mouseleave', () => {
             }
             setupAudio();
             audio.play();
+            if (isVideoMode) albumBgVideo.play().catch(() => {});
             isPlaying = true;
             visualize();
             playBtn.style.display = 'none';
@@ -3970,6 +4330,7 @@ albumArt.addEventListener('mouseleave', () => {
 
         pauseBtn.addEventListener('click', () => {
             audio.pause();
+            if (isVideoMode) albumBgVideo.pause();
             isPlaying = false;
             playBtn.style.display = 'inline-block';
             pauseBtn.style.display = 'none';
@@ -3981,6 +4342,10 @@ albumArt.addEventListener('mouseleave', () => {
         stopBtn.addEventListener('click', () => {
             audio.pause();
             audio.currentTime = 0;
+            if (isVideoMode) {
+                albumBgVideo.pause();
+                albumBgVideo.currentTime = 0;
+            }
             isPlaying = false;
             playBtn.style.display = 'inline-block';
             pauseBtn.style.display = 'none';
@@ -4023,33 +4388,38 @@ async function loadAvailableSongs() {
     availableSongsList.innerHTML = '';
     
     const showOfficial = queueShowOfficialCheck.checked;
-    const showCommunity = queueShowCommunityCheck.checked;
-    const searchTerm = queueSearchInput.value.toLowerCase();
+    const showAnime = queueShowAnimeCheck.checked;
+    // 커뮤니티는 비활성화됨
+    const searchTerm = queueSearchInput ? queueSearchInput.value.toLowerCase() : '';
     
     const songsArray = [];
     
     // 공식 노래 추가
     if (showOfficial) {
-        const allSongs = document.querySelectorAll('.playlist-item');
+        const allSongs = document.querySelectorAll('.playlist-item:not(.anime-item)');
         allSongs.forEach((item) => {
             songsArray.push({
                 src: item.getAttribute('data-src'),
                 icon: item.getAttribute('data-icon'),
-                title: item.textContent,
-                type: 'official'
+                title: item.textContent.trim(),
+                type: 'official',
+                element: item
             });
         });
     }
-    
-    // 커뮤니티 노래 추가
-    if (showCommunity) {
-        const communitySongs = await loadCommunitySongs();
-        communitySongs.forEach(song => {
+
+    // 애니메이션 OST 추가 (체크박스 확인)
+    if (showAnime) {
+        const animeSongs = getAnimeSongs();
+        animeSongs.forEach(song => {
             songsArray.push({
                 src: song.src,
                 icon: song.icon,
-                title: '👥 ' + song.title,
-                type: 'community'
+                title: '💿 ' + song.title,
+                type: 'anime',
+                video: song.video || null,
+                isAnime: true,
+                element: song.element || null
             });
         });
     }
@@ -4084,7 +4454,7 @@ async function loadAvailableSongs() {
     });
 
     // _RANDOM_ 항목은 오직 공식만 체크되었을 때만 표시
-    if (showOfficial && !showCommunity) {
+    if (showOfficial && !queueShowCommunityCheck.checked) {
         const randomOption = document.createElement('div');
         randomOption.className = 'song-option';
         randomOption.style.background = 'linear-gradient(135deg, rgba(255, 100, 200, 0.2), rgba(100, 200, 255, 0.2))';
@@ -4269,7 +4639,28 @@ function playQueueSong(index) {
         return;
     }
     
+    // 애니메이션 OST (동영상 포함)
+    if (song.isAnime && song.video) {
+        const loopIndicator = isQueueLooping ? '↺' : '';
+        const baseTitle = `${loopIndicator}${index + 1}/${playQueue.length} - ${song.title}`;
+        loadAnimeSong({ ...song, title: baseTitle });
+        updateCurrentQueueDisplay();
+        return;
+    }
+
     // 일반 노래 재생
+    // 비디오 모드 종료
+    if (isVideoMode) {
+        isVideoMode = false;
+        albumBgVideo.style.opacity = '0';
+        if (cdHideTimer) { clearTimeout(cdHideTimer); cdHideTimer = null; }
+        albumArt.style.transition = '';
+        albumArt.style.left = '50%';
+        albumArt.style.transform = 'translate(-50%, -50%)';
+        cdTitleEl.style.opacity = '0';
+        setTimeout(() => { albumBgVideo.src = ''; }, 800);
+    }
+
     currentSong = song;
     audio.src = song.src;
     audio.playbackRate = currentSpeed;
@@ -4530,18 +4921,25 @@ effectTab?.addEventListener('click', () => {
         prevBtn.addEventListener('click', () => {
                 if (!currentSong || !audio.duration) return; 
             audio.currentTime = Math.max(0, audio.currentTime - 10);
+            if (isVideoMode) albumBgVideo.currentTime = Math.max(0, albumBgVideo.currentTime - 10);
         });
 
         nextBtn.addEventListener('click', () => {
                 if (!currentSong || !audio.duration) return; 
             audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+            if (isVideoMode) albumBgVideo.currentTime = Math.min(albumBgVideo.duration || Infinity, albumBgVideo.currentTime + 10);
         });
 
         progressBar.addEventListener('click', (e) => {
             if (!currentSong) return;
             const rect = progressBar.getBoundingClientRect();
             const percent = (e.clientX - rect.left) / rect.width;
-            audio.currentTime = percent * audio.duration;
+         const newTime = percent * audio.duration;
+audio.currentTime = newTime;
+// 비디오는 루프이므로 duration 넘으면 나머지로
+if (isVideoMode && albumBgVideo.duration) {
+    albumBgVideo.currentTime = newTime % albumBgVideo.duration;
+}
         });
 
         // 반복 버튼
@@ -4591,8 +4989,13 @@ function draw() {
     const centerX = width / 2;
     const centerY = height * 0.5;
 
+   if (visualMode === 'rainbow-stripe') {
+    // 애니메이션 모드: 검은 오버레이 제거 (투명하게)
+    ctx.clearRect(0, 0, width, height);
+} else {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     ctx.fillRect(0, 0, width, height);
+}
 
     if (visualMode === 'none') {
         // 이펙트 없음 - 아무것도 그리지 않음
@@ -4678,15 +5081,110 @@ function draw() {
             ctx.fillStyle = `hsla(${hue}, 100%, 60%, 0.7)`;
             ctx.fillRect(width - barLength, i * sideBarHeight, barLength, sideBarHeight - 2);
         }
+    } else if (visualMode === 'rainbow-stripe') {
+        // 얇은 무지개 띠 이펙트 (애니메이션 노래용) - 속도에 따라 색상 변경
+        const stripeCount = 256;
+        const stripeHeight = (height * 0.15); // 화면의 15% 높이만 사용
+        const centerY = height / 2;
+        const stripeStartY = centerY - stripeHeight / 2;
+        const stripeEndY = centerY + stripeHeight / 2;
+        
+        // 속도에 따른 색상 모드 결정
+        let colorMode = 'rainbow'; // 기본값: 무지개
+        if (currentSpeed < 1.0) {
+            colorMode = 'slowed'; // Slowed: 빨강
+        } else if (currentSpeed > 1.0) {
+            colorMode = 'spedup'; // Sped Up: 파랑
+        }
+        
+        for (let i = 0; i < stripeCount; i++) {
+            const dataIndex = Math.floor((i / stripeCount) * bufferLength);
+            const value = dataArray[dataIndex];
+            
+            // 음 크기에 따라 띠의 높이가 변함
+            const barHeight = (value / 255) * (stripeHeight * 0.5);
+            
+            // 속도에 따른 색상 결정
+            let hue;
+            if (colorMode === 'slowed') {
+                hue = 0; // 빨강
+            } else if (colorMode === 'spedup') {
+                hue = 240; // 파랑
+            } else {
+                hue = (i / stripeCount) * 360; // 무지개
+            }
+            
+            const brightness = 50 + (value / 255) * 50;
+            
+            // 수평선 형태의 무지개 띠
+            const x = (i / stripeCount) * width;
+            const stripeWidth = width / stripeCount;
+            
+            // 더 투명한 색상 (alpha 감소)
+            ctx.strokeStyle = `hsla(${hue}, 100%, ${brightness}%, 0.5)`;
+            ctx.lineWidth = Math.max(2, barHeight * 0.5);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // 위쪽 띠
+            ctx.beginPath();
+            ctx.moveTo(x, centerY - barHeight);
+            ctx.lineTo(x, centerY);
+            ctx.stroke();
+            
+            // 아래쪽 띠 (대칭)
+            ctx.beginPath();
+            ctx.moveTo(x, centerY);
+            ctx.lineTo(x, centerY + barHeight);
+            ctx.stroke();
+            
+            // 글로우 효과 (더 옅게)
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = `hsla(${hue}, 100%, ${brightness}%, 0.3)`;
+        }
+        
+        // 가운데 밝은 선 (더 투명)
+        const avgValue = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+        const glowBrightness = Math.min(100, 50 + (avgValue / 255) * 100);
+        ctx.strokeStyle = `hsla(0, 0%, 100%, 0.3)`;
+        ctx.lineWidth = 2;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.2)';
+        ctx.beginPath();
+        ctx.moveTo(0, centerY);
+        ctx.lineTo(width, centerY);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
     }
 }
 
             draw();
         }
 
+        const effectToggleBtn = document.getElementById('effectToggleBtn');
+if (effectToggleBtn) {
+    effectToggleBtn.addEventListener('click', () => {
+        if (visualMode === 'circle') {
+            visualMode = 'bars';
+            effectToggleBtn.textContent = '📊';
+        } else if (visualMode === 'bars') {
+            visualMode = 'rainbow-stripe';
+            effectToggleBtn.textContent = '🌈';
+        } else if (visualMode === 'rainbow-stripe') {
+            visualMode = 'none';
+            effectToggleBtn.textContent = '⬛';
+        } else {
+            visualMode = 'circle';
+            effectToggleBtn.textContent = '🔵';
+        }
+        const modeNames = { circle: '원형', bars: '바', 'rainbow-stripe': '무지개', none: 'OFF' };
+        const prev = songInfo.textContent;
+        songInfo.textContent = `🎨 ${modeNames[visualMode]} 모드`;
+        setTimeout(() => { songInfo.textContent = prev; }, 1200);
+    });
+}
+
         
     </script>
 </body>
 </html>
-
-
