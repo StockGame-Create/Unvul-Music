@@ -2982,7 +2982,7 @@ body.video-mode #album-bg {
     <button id="cancelQueueBtn">❌ 재생목록 취소</button>
 </div>
 
-<audio id="audio" crossorigin="anonymous"></audio>
+
 
     <script>
         const canvas = document.getElementById('canvas');
@@ -3441,8 +3441,8 @@ function getAnimeSongs() {
 const albumBgVideo = document.createElement('video');
 albumBgVideo.id = 'album-bg-video';
 albumBgVideo.setAttribute('playsinline', '');
-albumBgVideo.setAttribute('loop', '');
-albumBgVideo.setAttribute('muted', '');
+// albumBgVideo.setAttribute('loop', '');
+albumBgVideo.muted = true;
 albumBgVideo.style.cssText = `
     position: absolute;
     top: 0; left: 0;
@@ -3454,6 +3454,12 @@ albumBgVideo.style.cssText = `
     z-index: 0;
     pointer-events: none;
 `;
+albumBgVideo.addEventListener('ended', () => {
+    if (isVideoMode) {
+        albumBgVideo.currentTime = 0;
+        albumBgVideo.play().catch(() => {});
+    }
+});
 document.getElementById('container').insertBefore(albumBgVideo, document.getElementById('canvas'));
 
 let isVideoMode = false;   // 현재 동영상 모드 여부
@@ -3525,16 +3531,28 @@ document.getElementById('container').appendChild(cdTitleEl);
 // 애니메이션 OST 로드 함수
 // =====================================================
 function syncVideoTime(t) {
-    if (!isVideoMode || !albumBgVideo.duration || isNaN(albumBgVideo.duration)) return;
-    albumBgVideo.currentTime = t % albumBgVideo.duration; // 모듈로 필수
+   // if (!isVideoMode || !albumBgVideo.duration || isNaN(albumBgVideo.duration)) return;
+   // albumBgVideo.currentTime = t % albumBgVideo.duration; // 모듈로 필수
 }
 
+function syncVideoToAudio(force = false) {
+    if (!isVideoMode) return;
+    if (!albumBgVideo.duration || isNaN(albumBgVideo.duration)) return;
+    if (!force && audio.currentTime < 0.5) return;
+    const targetTime = audio.currentTime % albumBgVideo.duration;
+    if (force || Math.abs(albumBgVideo.currentTime - targetTime) > 0.5) {
+        albumBgVideo.currentTime = targetTime;
+    }
+}
+
+
 // 이 리스너는 스크립트에서 단 한 번만 등록됩니다 (loadAnimeSong 안에 넣지 않음)
-audio.addEventListener('seeked', () => syncVideoTime(audio.currentTime));
+// audio.addEventListener('seeked', () => syncVideoTime(audio.currentTime));
 
 function loadAnimeSong(song) {
-    audio.pause();          // 추가: 중복 재생 방지
-    audio.currentTime = 0;  // 추가: 중복 재생 방지
+    audio.pause();
+    if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
+    isPlaying = false;
 
     const src = song.src;
     const icon = song.icon || null;
@@ -3543,32 +3561,24 @@ function loadAnimeSong(song) {
 
     currentSong = { src, icon, title, video: videoSrc, isAnime: true };
 
-    // 오디오 설정
     audio.src = src;
+    audio.load();
     audio.playbackRate = currentSpeed;
     audio.preservesPitch = (currentSpeed === 1.0);
-    updateSongTitle(title);
 
-    // 활성 표시
     document.querySelectorAll('.playlist-item, .anime-item').forEach(el => el.classList.remove('active'));
     if (song.element) song.element.classList.add('active');
 
     if (videoSrc) {
-        // ===== 동영상 배경 모드 =====
         isVideoMode = true;
-
-        // 기존 이미지 배경 숨김
         albumBg.classList.remove('show');
         albumBg.src = '';
 
-        // 동영상 배경 설정
         albumBgVideo.src = videoSrc;
         albumBgVideo.load();
+        albumBgVideo.currentTime = 0;
         albumBgVideo.style.opacity = '0';
-        albumBgVideo.play().catch(() => {});
-        setTimeout(() => { albumBgVideo.style.opacity = '0.85'; }, 100);
 
-        // CD 초기 상태 세팅
         if (cdHideTimer) { clearTimeout(cdHideTimer); cdHideTimer = null; }
         albumArt.style.transition = '';
         albumArt.style.left = '50%';
@@ -3581,14 +3591,18 @@ function loadAnimeSong(song) {
         }
         cdTitleEl.style.opacity = '0';
 
-        // 동영상 재생 시작되면 바로 CD 슬라이드 시퀀스 시작
+        albumBgVideo.addEventListener('canplay', function onVideoReady() {
+            albumBgVideo.removeEventListener('canplay', onVideoReady);
+            albumBgVideo.play().catch(() => {});
+            setTimeout(() => { albumBgVideo.style.opacity = '0.85'; }, 100);
+        }, { once: true });
+
         albumBgVideo.addEventListener('playing', function onFirstPlay() {
             albumBgVideo.removeEventListener('playing', onFirstPlay);
             if (isVideoMode) startCdHideSequence();
         }, { once: true });
 
     } else {
-        // ===== 일반 이미지 모드 (애니메이션이지만 mp4 없음) =====
         isVideoMode = false;
         albumBgVideo.style.opacity = '0';
         setTimeout(() => { albumBgVideo.src = ''; }, 800);
@@ -3612,38 +3626,23 @@ function loadAnimeSong(song) {
         }
     }
 
-    if (animationId) cancelAnimationFrame(animationId);
     setupAudio();
-    audio.play();
-    isPlaying = true;
-    // 애니메이션 노래 → 무지개 띠 이펙트
-    visualMode = 'rainbow-stripe';
-    visualize();
-    playBtn.style.display = 'none';
-    pauseBtn.style.display = 'inline-block';
+
+    audio.addEventListener('canplaythrough', function onReady() {
+        audio.removeEventListener('canplaythrough', onReady);
+        audio.play().catch(() => {});
+        isPlaying = true;
+        visualMode = 'rainbow-stripe';
+        visualize();
+        playBtn.style.display = 'none';
+        pauseBtn.style.display = 'inline-block';
+    }, { once: true });
+
     requestWakeLock();
 }
 
 // 일반 노래 재생 시 비디오 정리
-const _origLoadSong = loadSong;
-function loadSong(item) {
-    // 비디오 모드 종료
-    if (isVideoMode) {
-        isVideoMode = false;
-        albumBgVideo.style.opacity = '0';
-        if (cdHideTimer) { clearTimeout(cdHideTimer); cdHideTimer = null; }
-        // CD 원위치
-        albumArt.style.transition = 'left 0.5s, transform 0.5s';
-        albumArt.style.left = '50%';
-        albumArt.style.transform = 'translate(-50%, -50%)';
-        albumArt.style.opacity = '1';
-        cdTitleEl.style.opacity = '0';
-        setTimeout(() => { albumBgVideo.src = ''; }, 800);
-    }
-    // 애니메이션/무지개 띠 → 무지개 원 복원 (rainbow-stripe/none이었을 경우만)
-    if (visualMode === 'rainbow-stripe' || visualMode === 'none') visualMode = 'circle';
-    _origLoadSong(item);
-}
+
 
 // =====================================================
 // 플레이리스트 "전환" 버튼 (펑크 ↔ 애니메이션 OST)
@@ -3665,7 +3664,8 @@ function buildAnimePlaylistItems() {
         el.setAttribute('data-video', song.video || '');
         el.textContent = '✨ ' + song.title;
         el.style.borderColor = 'rgba(255,150,50,0.5)';
-        el.addEventListener('click', () => {
+        el.addEventListener('click', (e) => {
+              e.stopPropagation();
             loadAnimeSong(song);
         });
         playlistDiv.insertBefore(el, playlistScrollRight);
@@ -3730,7 +3730,7 @@ effectTab?.addEventListener('click', () => {
 });
 function loadAllSongsGrid() {
     allSongsGrid.innerHTML = '';
-    const allSongs = document.querySelectorAll('.playlist-item');
+   const allSongs = document.querySelectorAll('.playlist-item:not(.anime-item)'); 
     
     // 노래 데이터 수집 및 정렬
     const songsArray = [];
@@ -4061,7 +4061,7 @@ document.addEventListener('visibilitychange', () => {
         window.addEventListener('resize', resizeCanvas);
 
         // 재생목록 아이템 클릭 이벤트
-     document.querySelectorAll('.playlist-item').forEach(item => {
+     document.querySelectorAll('.playlist-item:not(.anime-item)').forEach(item => {
     item.addEventListener('click', () => {
         // OST 동영상 모드 강제 종료
         if (isVideoMode) {
@@ -4078,11 +4078,14 @@ document.addEventListener('visibilitychange', () => {
         if (visualMode === 'rainbow-stripe') visualMode = 'circle';
         
         // 원래 loadSong 직접 실행 (덮어씌운 버전 우회)
+       audio.pause();
+  
         const src = item.getAttribute('data-src');
         const icon = item.getAttribute('data-icon');
         const title = item.textContent;
         currentSong = { src, icon, title };
         audio.src = src;
+        audio.load();
         audio.playbackRate = currentSpeed;
         audio.preservesPitch = (currentSpeed === 1.0);
         updateSongTitle(title);
@@ -4105,57 +4108,66 @@ document.addEventListener('visibilitychange', () => {
     });
 });
 
-        function loadSong(item) {
-            const src = item.getAttribute('data-src');
-            const icon = item.getAttribute('data-icon');
-            const title = item.textContent;
-            
-            currentSong = { src, icon, title };
-            audio.src = src;
-             audio.playbackRate = currentSpeed; // 추가: 현재 속도 유지
-    audio.preservesPitch = (currentSpeed === 1.0);
-            songInfo.textContent = title;
+       function loadSong(item) {
+    // 비디오 모드 종료
+    if (isVideoMode) {
+        isVideoMode = false;
+        albumBgVideo.style.opacity = '0';
+        if (cdHideTimer) { clearTimeout(cdHideTimer); cdHideTimer = null; }
+        albumArt.style.transition = 'left 0.5s, transform 0.5s';
+        albumArt.style.left = '50%';
+        albumArt.style.transform = 'translate(-50%, -50%)';
+        albumArt.style.opacity = '1';
+        cdTitleEl.style.opacity = '0';
+        setTimeout(() => { albumBgVideo.src = ''; }, 800);
+    }
+    if (visualMode === 'rainbow-stripe' || visualMode === 'none') visualMode = 'circle';
 
-             updateSongTitle(title);
-            
-            // 활성 상태 표시
-            document.querySelectorAll('.playlist-item').forEach(el => el.classList.remove('active'));
-            item.classList.add('active');
-            
-            // 앨범 아트 로드
+    // 기존 loadSong 내용
+    audio.pause();
+    const src = item.getAttribute('data-src');
+    const icon = item.getAttribute('data-icon');
+    const title = item.textContent;
+    currentSong = { src, icon, title };
+    audio.src = src;
+    audio.load();
+    audio.playbackRate = currentSpeed;
+    audio.preservesPitch = (currentSpeed === 1.0);
+    songInfo.textContent = title;
+    updateSongTitle(title);
+    
+    document.querySelectorAll('.playlist-item').forEach(el => el.classList.remove('active'));
+    item.classList.add('active');
+    
     if (icon) {
-    const img = new Image();
-    img.onload = () => {
-        albumArt.src = icon;
-        albumArt.classList.add('show');
-        albumBg.src = icon;
-        albumBg.classList.add('show');
-    };
-    img.onerror = () => {
+        const img = new Image();
+        img.onload = () => {
+            albumArt.src = icon;
+            albumArt.classList.add('show');
+            albumBg.src = icon;
+            albumBg.classList.add('show');
+        };
+        img.onerror = () => {
+            albumArt.classList.remove('show');
+            albumBg.classList.remove('show');
+        };
+        img.src = icon;
+    } else {
         albumArt.classList.remove('show');
         albumBg.classList.remove('show');
-    };
-    img.src = icon;
-} else {
-    albumArt.classList.remove('show');
-    albumBg.classList.remove('show');
+    }
+
+    if (animationId) cancelAnimationFrame(animationId);
+    setupAudio();
+    audio.play();
+    isPlaying = true;
+    visualize();
+    playBtn.style.display = 'none';
+    pauseBtn.style.display = 'inline-block';
+    requestWakeLock();
 }
 
-   if (animationId) {
-    cancelAnimationFrame(animationId);
-}         
-            // 자동 재생
-            setupAudio();
-            audio.play();
-            isPlaying = true;
-            visualize();
-            playBtn.style.display = 'none';
-            pauseBtn.style.display = 'inline-block';
-
-            requestWakeLock();
-        }
-
-   function setupAudio() {
+function setupAudio() {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioContext.createAnalyser();
@@ -4164,7 +4176,6 @@ document.addEventListener('visibilitychange', () => {
         analyser.minDecibels = -90;
         analyser.maxDecibels = -10;
         
-        // GainNode 추가
         gainNode = audioContext.createGain();
         gainNode.gain.value = 1.0;
         
@@ -4173,11 +4184,9 @@ document.addEventListener('visibilitychange', () => {
         gainNode.connect(analyser);
         analyser.connect(audioContext.destination);
         
-        // audio 요소의 볼륨은 항상 1.0으로 고정
         audio.volume = 1.0;
     }
     
-    // AudioContext가 suspended 상태면 resume
     if (audioContext.state === 'suspended') {
         audioContext.resume();
     }
@@ -4227,7 +4236,9 @@ slowedBtn.addEventListener('click', () => {
     
     audio.playbackRate = currentSpeed;
     audio.preservesPitch = false;
-    if (isVideoMode) albumBgVideo.playbackRate = currentSpeed;
+    if (isVideoMode) {
+    albumBgVideo.playbackRate = currentSpeed;
+    }
     updateSpeedButtons('slowed');
     updateSongTitle();
 });
@@ -4245,7 +4256,10 @@ normalSpeedBtn.addEventListener('click', () => {
     
     audio.playbackRate = 1.0;
     audio.preservesPitch = true;
-    if (isVideoMode) albumBgVideo.playbackRate = 1.0;
+    if (isVideoMode) {
+    albumBgVideo.playbackRate = 1.0;
+    // syncVideoToAudio 호출 제거
+}
     updateSpeedButtons('normal');
     updateSongTitle();
 });
@@ -4279,7 +4293,10 @@ spedUpBtn.addEventListener('click', () => {
     
     audio.playbackRate = currentSpeed;
     audio.preservesPitch = false;
-    if (isVideoMode) albumBgVideo.playbackRate = currentSpeed;
+   if (isVideoMode) {
+    albumBgVideo.playbackRate = currentSpeed;
+    // playbackRate 변경 후 currentTime 건드리지 않음 — 제거
+}
     updateSpeedButtons('spedup');
     updateSongTitle();
 });
@@ -4311,50 +4328,49 @@ albumArt.addEventListener('mouseleave', () => {
     albumArt.classList.remove('spinning');
 });
 
-        playBtn.addEventListener('click', () => {
-            if (!currentSong) {
-                alert('먼저 노래 목록에서 노래를 선택하세요!');
-                return;
-            }
-            setupAudio();
-            audio.play();
-            if (isVideoMode) albumBgVideo.play().catch(() => {});
-            isPlaying = true;
-            visualize();
-            playBtn.style.display = 'none';
-            pauseBtn.style.display = 'inline-block';
-            songInfo.textContent = '🎶 ' + currentSong.title;
+      playBtn.addEventListener('click', () => {
+    if (!currentSong) {
+        alert('먼저 노래 목록에서 노래를 선택하세요!');
+        return;
+    }
+    setupAudio();
+    audio.play();
+    if (isVideoMode) {
+        syncVideoToAudio();  // 재생 전 싱크 맞추고
+        albumBgVideo.play().catch(() => {});
+    }
+    isPlaying = true;
+    visualize();
+    playBtn.style.display = 'none';
+    pauseBtn.style.display = 'inline-block';
+    updateSongTitle();
+    requestWakeLock();
+});
 
-            requestWakeLock();
-        });
+      pauseBtn.addEventListener('click', () => {
+    audio.pause();
+    if (isVideoMode) albumBgVideo.pause();
+    isPlaying = false;
+    playBtn.style.display = 'inline-block';
+    pauseBtn.style.display = 'none';
+    if (currentSong) songInfo.textContent = '⏸ ' + currentSong.title;
+    requestWakeLock();
+});
 
-        pauseBtn.addEventListener('click', () => {
-            audio.pause();
-            if (isVideoMode) albumBgVideo.pause();
-            isPlaying = false;
-            playBtn.style.display = 'inline-block';
-            pauseBtn.style.display = 'none';
-            songInfo.textContent = '⏸ ' + currentSong.title;
-
-            requestWakeLock();
-        });
-
-        stopBtn.addEventListener('click', () => {
-            audio.pause();
-            audio.currentTime = 0;
-            if (isVideoMode) {
-                albumBgVideo.pause();
-                albumBgVideo.currentTime = 0;
-            }
-            isPlaying = false;
-            playBtn.style.display = 'inline-block';
-            pauseBtn.style.display = 'none';
-            songInfo.textContent = '⏹ ' + currentSong.title;
-            if (animationId) {
-                cancelAnimationFrame(animationId);
-            }
-            requestWakeLock();
-        });
+     stopBtn.addEventListener('click', () => {
+    audio.pause();
+    audio.currentTime = 0;
+    if (isVideoMode) {
+        albumBgVideo.pause();
+        albumBgVideo.currentTime = 0;
+    }
+    isPlaying = false;
+    playBtn.style.display = 'inline-block';
+    pauseBtn.style.display = 'none';
+    if (currentSong) songInfo.textContent = '⏹ ' + currentSong.title;
+    if (animationId) cancelAnimationFrame(animationId);
+    requestWakeLock();
+});
 
         // 재생목록 만들기 기능
 createQueueBtn.addEventListener('click', () => {
@@ -4918,30 +4934,40 @@ effectTab?.addEventListener('click', () => {
     speedTabContent.classList.remove('active');
 });
 
-        prevBtn.addEventListener('click', () => {
-                if (!currentSong || !audio.duration) return; 
-            audio.currentTime = Math.max(0, audio.currentTime - 10);
-            if (isVideoMode) albumBgVideo.currentTime = Math.max(0, albumBgVideo.currentTime - 10);
-        });
+prevBtn.addEventListener('click', () => {
+    if (!currentSong || !audio.duration) return;
+    audio.currentTime = Math.max(0, audio.currentTime - 10);
+    if (isVideoMode) {
+        audio.addEventListener('seeked', function onSeeked() {
+            audio.removeEventListener('seeked', onSeeked);
+            syncVideoToAudio(true);
+        }, { once: true });
+    }
+});
 
-        nextBtn.addEventListener('click', () => {
-                if (!currentSong || !audio.duration) return; 
-            audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
-            if (isVideoMode) albumBgVideo.currentTime = Math.min(albumBgVideo.duration || Infinity, albumBgVideo.currentTime + 10);
-        });
+nextBtn.addEventListener('click', () => {
+    if (!currentSong || !audio.duration) return;
+    audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+    if (isVideoMode) {
+        audio.addEventListener('seeked', function onSeeked() {
+            audio.removeEventListener('seeked', onSeeked);
+            syncVideoToAudio(true);
+        }, { once: true });
+    }
+});
 
-        progressBar.addEventListener('click', (e) => {
-            if (!currentSong) return;
-            const rect = progressBar.getBoundingClientRect();
-            const percent = (e.clientX - rect.left) / rect.width;
-         const newTime = percent * audio.duration;
-audio.currentTime = newTime;
-// 비디오는 루프이므로 duration 넘으면 나머지로
-if (isVideoMode && albumBgVideo.duration) {
-    albumBgVideo.currentTime = newTime % albumBgVideo.duration;
-}
-        });
-
+progressBar.addEventListener('click', (e) => {
+    if (!currentSong) return;
+    const rect = progressBar.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = percent * audio.duration;
+    if (isVideoMode) {
+        audio.addEventListener('seeked', function onSeeked() {
+            audio.removeEventListener('seeked', onSeeked);
+            syncVideoToAudio(true);
+        }, { once: true });
+    }
+});
         // 반복 버튼
 loopBtn.addEventListener('click', () => {
     audio.loop = !audio.loop;
@@ -4954,14 +4980,22 @@ loopBtn.addEventListener('click', () => {
     }
 });
 
-        audio.addEventListener('timeupdate', () => {
-            if (audio.duration) {
-                const percent = (audio.currentTime / audio.duration) * 100;
-                progressFill.style.width = percent + '%';
-                currentTimeEl.textContent = formatTime(audio.currentTime);
-                totalTimeEl.textContent = formatTime(audio.duration);
-            }
-        });
+     audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+        const percent = (audio.currentTime / audio.duration) * 100;
+        progressFill.style.width = percent + '%';
+        currentTimeEl.textContent = formatTime(audio.currentTime);
+        totalTimeEl.textContent = formatTime(audio.duration);
+    }
+    // 영상 모드일 때 주기적으로 싱크 보정 (매 timeupdate마다는 너무 잦으니 1초마다)
+    if (isVideoMode) {
+        const now = Date.now();
+        if (!syncVideoToAudio._lastSync || now - syncVideoToAudio._lastSync > 1000) {
+            syncVideoToAudio._lastSync = now;
+            syncVideoToAudio();
+        }
+    }
+});
 
      
 
